@@ -4,6 +4,10 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useForm } from '@tanstack/react-form';
 import { api } from '../../lib/api';
+import { zodValidator } from '@tanstack/zod-form-adapter';
+import { createPostSchema } from '../../../../server/routes/sharedValidation';
+import { Calendar } from '@/components/ui/calendar';
+import { ConfettiButton } from '@/components/magicui/confetti';
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
 });
@@ -11,12 +15,13 @@ export const Route = createFileRoute('/_authenticated/create-expense')({
 function CreateExpense() {
   const navigate = useNavigate();
   const form = useForm({
+    validatorAdapter: zodValidator(),
     defaultValues: {
       title: '',
       amount: '',
+      date: new Date().toISOString(),
     },
     onSubmit: async ({ value }) => {
-      // await new Promise((c) => setTimeout(c, 3000));
       const res = await api.expenses.$post({ json: value });
       console.log(res);
       if (!res.ok) {
@@ -25,10 +30,12 @@ function CreateExpense() {
       navigate({ to: '/expenses' });
     },
   });
+
   return (
-    <div className="p-2 m-auto max-w-xl ">
-      <h2>Hello sqdsqdsq About!</h2>
+    <div className="p-2">
+      <h2>Create Expense</h2>
       <form
+        className="flex flex-col gap-y-4 max-w-xl m-auto"
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -37,8 +44,11 @@ function CreateExpense() {
       >
         <form.Field
           name="title"
+          validators={{
+            onChange: createPostSchema.shape.title,
+          }}
           children={(field) => (
-            <>
+            <div>
               <Label htmlFor={field.name}>Title</Label>
               <Input
                 id={field.name}
@@ -50,14 +60,16 @@ function CreateExpense() {
               {field.state.meta.isTouched && field.state.meta.errors.length ? (
                 <em>{field.state.meta.errors.join(', ')}</em>
               ) : null}
-            </>
+            </div>
           )}
         />
-
         <form.Field
           name="amount"
+          validators={{
+            onChange: createPostSchema.shape.amount,
+          }}
           children={(field) => (
-            <>
+            <div>
               <Label htmlFor={field.name}>Amount</Label>
               <Input
                 id={field.name}
@@ -70,13 +82,38 @@ function CreateExpense() {
               {field.state.meta.isTouched && field.state.meta.errors.length ? (
                 <em>{field.state.meta.errors.join(', ')}</em>
               ) : null}
-            </>
+            </div>
+          )}
+        />
+        <form.Field
+          name="date"
+          validators={{
+            onChange: createPostSchema.shape.date,
+          }}
+          children={(field) => (
+            <div className="self-center">
+              <Calendar
+                mode="single"
+                selected={
+                  field.state.value ? new Date(field.state.value) : undefined
+                }
+                onSelect={(date) =>
+                  field.handleChange(
+                    date ? date.toISOString() : new Date().toISOString(),
+                  )
+                }
+                className="rounded-md border shadow"
+              />
+              {field.state.meta.isTouched && field.state.meta.errors.length ? (
+                <em>{field.state.meta.errors.join(', ')}</em>
+              ) : null}
+            </div>
           )}
         />
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <Button type="submit" className="mt-4" disabled={!canSubmit}>
+            <Button type="submit" className="mt-4 z-2" disabled={!canSubmit}>
               {isSubmitting ? '...' : 'Create Expense'}
             </Button>
           )}

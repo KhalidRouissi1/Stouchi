@@ -3,9 +3,11 @@ import { userQueyOptions } from '../../lib/api';
 export const Route = createFileRoute('/_authenticated/profile')({
   component: Profile,
 });
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '../../components/ui/button';
-
+import ShinyButton from '@/components/magicui/shiny-button';
 function Profile() {
   const { isPending, error, data } = useQuery(userQueyOptions);
   if (isPending) return 'loading';
@@ -13,11 +15,19 @@ function Profile() {
 
   return (
     <div className="p-2">
-      Hello from Profile!
-      <p>Hello {data.user.family_name}</p>
-      <Button>
-        <a href="/api/logout">Logout!</a>
-      </Button>
+      <div className="flex items-center gap-4 my-4">
+        <Avatar>
+          {data.user.picture && (
+            <AvatarImage src={data.user.picture} alt={data.user.given_name} />
+          )}
+          <AvatarFallback>{data.user.given_name}</AvatarFallback>
+        </Avatar>
+
+        <p>
+          {data.user.given_name} {data.user.family_name}
+        </p>
+      </div>
+      <ShinyButton href="api/logout">Login</ShinyButton>
     </div>
   );
 }

@@ -1,10 +1,15 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { userQueyOptions } from '../lib/api';
+import { ConfettiButton } from '../components/magicui/confetti';
+import ShinyButton from '../components/magicui/shiny-button';
 
 const Login = () => (
   <>
-    <div>You have to login</div>
-    <a href="/api/login">Login!</a>
+    <div className="m-10 text-2xl">You have to login or register</div>
+    <div className="flex flex-col gap-y-2">
+      <ShinyButton href="/api/login">Login</ShinyButton>
+      <ShinyButton href="/api/register">register</ShinyButton>
+    </div>
   </>
 );
 

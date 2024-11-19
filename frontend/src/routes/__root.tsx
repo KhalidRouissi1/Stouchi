@@ -18,22 +18,25 @@ const Root = () => {
 
 function NavBar() {
   return (
-    <div className="p-2 flex gap-2 max-w-2xl m-auto">
+    <div className="flex justify-between max-w-2xl m-auto items-baseline">
       <Link to="/" className="[&.active]:font-bold]">
-        Home
+        <h1 className="text-2xl font-bold">Stouchi</h1>
       </Link>
-      <Link to="/about" className="[&.active]:font-bold]">
-        About
-      </Link>
-      <Link to="/expenses" className="[&.active]:font-bold]">
-        expenses
-      </Link>
-      <Link to="/create-expense" className="[&.active]:font-bold]">
-        Create-expense
-      </Link>
-      <Link to="/profile" className="[&.active]:font-bold]">
-        Profile
-      </Link>
+
+      <div className="p-2 flex gap-2 ">
+        <Link to="/about" className="[&.active]:font-bold]">
+          About
+        </Link>
+        <Link to="/expenses" className="[&.active]:font-bold]">
+          expenses
+        </Link>
+        <Link to="/create-expense" className="[&.active]:font-bold]">
+          Create-expense
+        </Link>
+        <Link to="/profile" className="[&.active]:font-bold]">
+          Profile
+        </Link>
+      </div>
     </div>
   );
 }

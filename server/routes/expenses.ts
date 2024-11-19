@@ -1,25 +1,12 @@
+import { expenses } from './../db/schema';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { getUser } from '../kind';
 import { db } from '../db';
-import { expenses as expensesTable } from '../db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { expenses as expensesTable, insertExpensesSchema } from '../db/schema';
+import { and, desc, eq, sum } from 'drizzle-orm';
 import { $ } from 'bun';
-/**
- * This fucntion will recive a parameter and it will check if the values of em apply the validations or no
- * Input : {title: string, amount: number}
- * Output : {title: string, amount: number}
- */
-
-const expenseSchema = z.object({
-  id: z.number().int().positive(),
-  title: z.string().min(3).max(100),
-  amount: z.string(),
-});
-
-type Expense = z.infer<typeof expenseSchema>;
-const createPostSchema = expenseSchema.omit({ id: true });
+import { createPostSchema } from './sharedValidation';
 
 /**
  * This router here handle all the expenses requests
@@ -27,29 +14,44 @@ const createPostSchema = expenseSchema.omit({ id: true });
  * Output: Response & Status code
  */
 export const expensesRoute = new Hono()
-  .get('/', getUser, (c) => {
+  .get('/', getUser, async (c) => {
     const user = c.var.user;
     const expenses = db
       .select()
       .from(expensesTable)
       .where(eq(expensesTable.userId, user.id))
       .limit(200)
-      .orderBy(desc(expensesTable));
-    return c.json({ expenses: expenses });
+      .orderBy(desc(expensesTable.createdAt));
+    const cleanResponse = (await expenses).map((row) => ({
+      id: row.id,
+      title: row.title,
+      amount: row.amount,
+      userId: row.userId,
+      date: row.date,
+    }));
+    return c.json({ expenses: cleanResponse });
   })
   .get('/total-spent', getUser, async (c) => {
-    const total = mockDb.reduce((acc, expense) => acc + +expense.amount, 0);
-    return c.json({ total });
+    const user = c.var.user;
+    const result = await db
+      .select({ total: sum(expensesTable.amount) })
+      .from(expensesTable)
+      .where(eq(expensesTable.userId, user.id))
+      .limit(1)
+      .then((res) => res[0]);
+    return c.json(result);
   })
   .post('/', getUser, zValidator('json', createPostSchema), async (c) => {
     const user = c.var.user;
-    const expense = await c.req.valid('json');
+    const expense = c.req.valid('json');
+    const validatedExpenseObj = insertExpensesSchema.parse({
+      ...expense,
+      userId: user.id,
+    });
+
     const res = await db
       .insert(expensesTable)
-      .values({
-        ...expense,
-        userId: user.id,
-      })
+      .values(validatedExpenseObj)
       .returning();
 
     const cleanResponse = res.map((row) => ({
@@ -62,22 +64,48 @@ export const expensesRoute = new Hono()
     c.status(201);
     return c.json(cleanResponse);
   })
-  .get('/:id{[0-9]+}', getUser, (c) => {
-    const id = Number.parseInt(c.req.param('id'));
-    const expense = mockDb.find((expense) => expense.id === id);
+  .get('/:id{[0-9]+}', getUser, async (c) => {
+    const id = +c.req.param('id');
+    const user = c.var.user;
+    const expense = await db
+      .select()
+      .from(expensesTable)
+      .where(and(eq(expensesTable.userId, user.id), eq(expensesTable.id, id)))
+      .limit(1)
+      .then((res) => res[0]);
 
     if (!expense) {
       return c.notFound();
-    } else {
-      return c.json({ expense });
     }
+
+    const cleanResponse = {
+      id: expense.id,
+      title: expense.title,
+      amount: expense.amount,
+      userId: expense.userId,
+    };
+
+    return c.json({ expense: cleanResponse });
   })
-  .delete('/:id{[0-9]+}', getUser, (c) => {
-    const id = Number.parseInt(c.req.param('id'));
-    const index = mockDb.findIndex((expense) => expense.id === id);
-    if (index === -1) {
+  .delete('/:id{[0-9]+}', getUser, async (c) => {
+    const id = +c.req.param('id');
+    const user = c.var.user;
+    const expense = await db
+      .delete(expensesTable)
+      .where(and(eq(expensesTable.userId, user.id), eq(expensesTable.id, id)))
+      .returning()
+      .then((res) => res[0]);
+
+    if (!expense) {
       return c.notFound();
     }
-    const deleteExpense = mockDb.splice(index, 1)[0];
-    return c.json({ expense: deleteExpense });
+
+    const cleanResponse = {
+      id: expense.id,
+      title: expense.title,
+      amount: expense.amount,
+      userId: expense.userId,
+    };
+
+    return c.json({ expense: cleanResponse });
   });

@@ -8,6 +8,20 @@
       "when": 1731997057799,
       "tag": "0000_slow_owl",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1732010170586,
+      "tag": "0001_chemical_hex",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732027694964,
+      "tag": "0002_loud_talon",
+      "breakpoints": true
     }
   ]
 }
