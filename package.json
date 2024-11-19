@@ -3,18 +3,26 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "bun start index.ts",
-    "dev": "bun start --watch index.ts"
+    "start": "bun run server/index.ts",
+    "dev": "bun run --watch server/index.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@flydotio/dockerfile": "^0.5.9",
+    "@types/bun": "latest",
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.28.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.2.13",
     "@hono/zod-validator": "^0.4.1",
+    "@kinde-oss/kinde-typescript-sdk": "^2.9.1",
+    "drizzle-orm": "^0.36.3",
     "hono": "^4.6.10",
+    "pg": "^8.13.1",
+    "postgres": "^3.4.5",
     "zod": "^3.23.8"
   }
 }
