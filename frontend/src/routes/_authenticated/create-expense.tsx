@@ -2,17 +2,19 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { useForm } from '@tanstack/react-form';
-import { api } from '../../lib/api';
+import { api, getAllExpensesQueryOptions } from '../../lib/api';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { createPostSchema } from '../../../../server/routes/sharedValidation';
-import { Calendar } from '@/components/ui/calendar';
-import { ConfettiButton } from '@/components/magicui/confetti';
+import { expenses } from '../../../../server/db/schema';
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
 });
 
 function CreateExpense() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const form = useForm({
     validatorAdapter: zodValidator(),
@@ -27,6 +29,17 @@ function CreateExpense() {
       if (!res.ok) {
         throw new Error('server error');
       }
+      const newExpense = await res.json();
+      const existingExpenses = await queryClient.ensureQueryData(
+        getAllExpensesQueryOptions,
+      );
+      queryClient.setQueryData(
+        getAllExpensesQueryOptions.queryKey,
+        (oldData) => ({
+          ...existingExpenses,
+          expenses: [newExpense, ...existingExpenses.expenses],
+        }),
+      );
       navigate({ to: '/expenses' });
     },
   });

@@ -1,6 +1,5 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { userQueyOptions } from '../lib/api';
-import { ConfettiButton } from '../components/magicui/confetti';
 import ShinyButton from '../components/magicui/shiny-button';
 
 const Login = () => (

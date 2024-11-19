@@ -52,14 +52,16 @@ export const expensesRoute = new Hono()
     const res = await db
       .insert(expensesTable)
       .values(validatedExpenseObj)
-      .returning();
+      .returning()
+      .then((res) => res[0]);
 
-    const cleanResponse = res.map((row) => ({
-      id: row.id,
-      title: row.title,
-      amount: row.amount,
-      userId: row.userId,
-    }));
+    const cleanResponse = {
+      id: res.id,
+      title: res.title,
+      amount: res.amount,
+      userId: res.userId,
+      date: res.date,
+    };
 
     c.status(201);
     return c.json(cleanResponse);
@@ -83,6 +85,7 @@ export const expensesRoute = new Hono()
       title: expense.title,
       amount: expense.amount,
       userId: expense.userId,
+      date: expense.date,
     };
 
     return c.json({ expense: cleanResponse });
@@ -105,6 +108,7 @@ export const expensesRoute = new Hono()
       title: expense.title,
       amount: expense.amount,
       userId: expense.userId,
+      date: expense.date,
     };
 
     return c.json({ expense: cleanResponse });
