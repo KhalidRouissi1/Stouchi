@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { type QueryClient } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
 import {
@@ -5,46 +6,81 @@ import {
   Link,
   Outlet,
 } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
+import { Moon, Sun } from 'lucide-react';
+
 const Root = () => {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    setIsDark(isDarkMode);
+  }, []);
+
+  const toggleDarkMode = () => {
+    if (isDark) {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+    setIsDark(!isDark);
+  };
+
   return (
     <>
-      <NavBar />
+      <NavBar toggleDarkMode={toggleDarkMode} isDark={isDark} />
       <hr />
-      <div className="p-2  max-w-3xl m-auto">
+      <div className="mt-10 p-2 max-w-3xl m-auto">
         <Outlet />
       </div>
     </>
   );
 };
 
-function NavBar() {
+interface NavBarProps {
+  toggleDarkMode: () => void;
+  isDark: boolean;
+}
+
+function NavBar({ toggleDarkMode, isDark }: NavBarProps) {
   return (
-    <div className="flex justify-between max-w-2xl m-auto items-baseline">
-      <Link to="/" className="[&.active]:font-bold]">
+    <div className="flex justify-between items-center p-4 max-w-6xl m-auto">
+      <Link to="/" className="[&.active]:font-bold">
         <h1 className="text-2xl font-bold">Stouchi</h1>
       </Link>
 
-      <div className="p-2 flex gap-2 ">
-        <Link to="/about" className="[&.active]:font-bold]">
+      <div className="hidden md:flex gap-6 items-center">
+        <Link to="/about" className="[&.active]:font-bold">
           About
         </Link>
-        <Link to="/expenses" className="[&.active]:font-bold]">
-          expenses
+        <Link to="/expenses" className="[&.active]:font-bold">
+          Expenses
         </Link>
-        <Link to="/create-expense" className="[&.active]:font-bold]">
-          Create-expense
+        <Link to="/create-expense" className="[&.active]:font-bold">
+          Create Expense
         </Link>
-        <Link to="/profile" className="[&.active]:font-bold]">
+        <Link to="/profile" className="[&.active]:font-bold">
           Profile
         </Link>
+        <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+          {isDark ? (
+            <Sun className="h-[1.2rem] w-[1.2rem]" />
+          ) : (
+            <Moon className="h-[1.2rem] w-[1.2rem]" />
+          )}
+          <span className="sr-only">Toggle dark mode</span>
+        </Button>
       </div>
+
       <Toaster />
     </div>
   );
 }
+
 interface MyRouterContext {
   queryClient: QueryClient;
 }
+
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: Root,
 });

@@ -9,12 +9,13 @@ import {
   createExpense,
   getAllExpensesQueryOptions,
   loadingCreateExpenseQueryOptions,
+  oftenExpensesQueryOptions,
 } from '../../lib/api';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { type CreateExpense } from '../../../../server/routes/sharedValidation';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { createPostSchema } from '../../../../server/routes/sharedValidation';
-import OftenExpense from '../../components/OftenExpense';
+
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
 });
@@ -22,6 +23,8 @@ export const Route = createFileRoute('/_authenticated/create-expense')({
 function CreateExpense() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const { data: oftenExpenses } = useQuery(oftenExpensesQueryOptions);
 
   const form = useForm({
     validatorAdapter: zodValidator(),
@@ -60,10 +63,22 @@ function CreateExpense() {
     },
   });
 
+  const handleOftenExpenseClick = (title: any) => {
+    form.setFieldValue('title', title);
+  };
   return (
-    <div className="p-2">
-      <OftenExpense />
-      <h2>Create Expense</h2>
+    <div className="  p-2">
+      <div className="flex justify-center items-center gap-6 my-3">
+        {oftenExpenses?.expenses?.map((expense) => (
+          <Button
+            key={expense.title}
+            onClick={() => handleOftenExpenseClick(expense.title)}
+          >
+            {`${expense.title} `}
+          </Button>
+        ))}
+      </div>
+      <h2 className="text-[30px] font-bold">Create Expense</h2>
       <form
         className="flex flex-col gap-y-4 max-w-xl m-auto"
         onSubmit={(e) => {

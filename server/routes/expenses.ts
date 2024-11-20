@@ -142,16 +142,16 @@ export const expensesRoute = new Hono()
   })
   .get('/oftenExpense', getUser, async (c) => {
     const user = c.var.user;
-    console.log(user);
     const expenses = db
       .select({
         title: expensesTable.title,
+
         totalAmount: sum(expensesTable.amount),
       })
       .from(expensesTable)
       .where(eq(expensesTable.userId, user.id))
       .groupBy(expensesTable.title)
-      .limit(5);
+      .limit(6);
     const cleanResponse = (await expenses).map((row) => ({
       title: row.title,
       amount: row.totalAmount,

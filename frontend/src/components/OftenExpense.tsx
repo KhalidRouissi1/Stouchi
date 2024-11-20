@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { oftenExpensesQueryOptions } from '../lib/api';
 import { Button } from './ui/button';
 
-const OftenExpense = () => {
+const OftenExpense = ({ form }) => {
   const {
     data: oftenExpenses,
     isLoading,
@@ -17,16 +17,26 @@ const OftenExpense = () => {
     return <div>Error: {error.message}</div>;
   }
 
+  const handleOftenExpenseClick = (title: string, amount: number) => {
+    // Directly set form field values
+    form.setFieldValue('title', title);
+    form.setFieldValue('amount', amount.toString());
+  };
+
   return (
     <div className="flex flex-col self-center">
       <h2 className="">Often expenses</h2>
-
       <div className="flex space-x-4 max-w-xl m-auto my-6">
         {oftenExpenses?.expenses?.map(
           (expense: { title: string; amount: number }) => (
             <Button
               key={expense.title}
-            >{`${expense.title}: $${expense.amount}`}</Button>
+              onClick={() =>
+                handleOftenExpenseClick(expense.title, expense.amount)
+              }
+            >
+              {`${expense.title}`}
+            </Button>
           ),
         )}
       </div>

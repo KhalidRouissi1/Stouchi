@@ -17,6 +17,7 @@ import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index
 import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedExpensesImport } from './routes/_authenticated/expenses'
 import { Route as AuthenticatedCreateExpenseImport } from './routes/_authenticated/create-expense'
+import { Route as AuthenticatedBudgetImport } from './routes/_authenticated/budget'
 
 // Create/Update Routes
 
@@ -57,6 +58,12 @@ const AuthenticatedCreateExpenseRoute = AuthenticatedCreateExpenseImport.update(
   } as any,
 )
 
+const AuthenticatedBudgetRoute = AuthenticatedBudgetImport.update({
+  id: '/budget',
+  path: '/budget',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -74,6 +81,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/about'
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
+    }
+    '/_authenticated/budget': {
+      id: '/_authenticated/budget'
+      path: '/budget'
+      fullPath: '/budget'
+      preLoaderRoute: typeof AuthenticatedBudgetImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/create-expense': {
       id: '/_authenticated/create-expense'
@@ -109,6 +123,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedBudgetRoute: typeof AuthenticatedBudgetRoute
   AuthenticatedCreateExpenseRoute: typeof AuthenticatedCreateExpenseRoute
   AuthenticatedExpensesRoute: typeof AuthenticatedExpensesRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
@@ -116,6 +131,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedBudgetRoute: AuthenticatedBudgetRoute,
   AuthenticatedCreateExpenseRoute: AuthenticatedCreateExpenseRoute,
   AuthenticatedExpensesRoute: AuthenticatedExpensesRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
@@ -129,6 +145,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/budget': typeof AuthenticatedBudgetRoute
   '/create-expense': typeof AuthenticatedCreateExpenseRoute
   '/expenses': typeof AuthenticatedExpensesRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -137,6 +154,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
+  '/budget': typeof AuthenticatedBudgetRoute
   '/create-expense': typeof AuthenticatedCreateExpenseRoute
   '/expenses': typeof AuthenticatedExpensesRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -147,6 +165,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/_authenticated/budget': typeof AuthenticatedBudgetRoute
   '/_authenticated/create-expense': typeof AuthenticatedCreateExpenseRoute
   '/_authenticated/expenses': typeof AuthenticatedExpensesRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -155,13 +174,21 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/about' | '/create-expense' | '/expenses' | '/profile' | '/'
+  fullPaths:
+    | ''
+    | '/about'
+    | '/budget'
+    | '/create-expense'
+    | '/expenses'
+    | '/profile'
+    | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/create-expense' | '/expenses' | '/profile' | '/'
+  to: '/about' | '/budget' | '/create-expense' | '/expenses' | '/profile' | '/'
   id:
     | '__root__'
     | '/_authenticated'
     | '/about'
+    | '/_authenticated/budget'
     | '/_authenticated/create-expense'
     | '/_authenticated/expenses'
     | '/_authenticated/profile'
@@ -196,6 +223,7 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
+        "/_authenticated/budget",
         "/_authenticated/create-expense",
         "/_authenticated/expenses",
         "/_authenticated/profile",
@@ -204,6 +232,10 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about.tsx"
+    },
+    "/_authenticated/budget": {
+      "filePath": "_authenticated/budget.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/create-expense": {
       "filePath": "_authenticated/create-expense.tsx",
