@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Moon, Sun } from 'lucide-react';
 
 const Root = () => {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
     const isDarkMode = document.documentElement.classList.contains('dark');
@@ -37,12 +37,13 @@ const Root = () => {
   );
 };
 
-interface NavBarProps {
+function NavBar({
+  toggleDarkMode,
+  isDark,
+}: {
   toggleDarkMode: () => void;
   isDark: boolean;
-}
-
-function NavBar({ toggleDarkMode, isDark }: NavBarProps) {
+}) {
   return (
     <div className="flex justify-between items-center p-4 max-w-6xl m-auto">
       <Link to="/" className="[&.active]:font-bold">

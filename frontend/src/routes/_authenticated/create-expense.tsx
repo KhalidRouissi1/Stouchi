@@ -37,6 +37,7 @@ function CreateExpense() {
       const existingExpenses = await queryClient.ensureQueryData(
         getAllExpensesQueryOptions,
       );
+
       navigate({ to: '/expenses' });
       queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {
         expense: value,
@@ -78,7 +79,7 @@ function CreateExpense() {
           </Button>
         ))}
       </div>
-      <h2 className="text-[30px] font-bold">Create Expense</h2>
+      <h2 className="text-[30px] font-bold&">Create Expense</h2>
       <form
         className="flex flex-col gap-y-4 max-w-xl m-auto"
         onSubmit={(e) => {

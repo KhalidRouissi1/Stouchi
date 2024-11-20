@@ -35,7 +35,7 @@ function Index() {
 
   // Ensure data.total is a number
   const totalSpent = data ? parseFloat(data.total) : 0;
-  const budget = 100000000;
+  const budget = 10000;
 
   return (
     <div className="flex flex-col gap-10">
@@ -49,10 +49,11 @@ function Index() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${isPending ? '...' : totalSpent.toFixed(2)}
+              ${isPending ? '...' : totalSpent ? totalSpent.toFixed(2) : 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              {((totalSpent / budget) * 100).toFixed(0)}% of budget
+              {totalSpent ? ((totalSpent / budget) * 100).toFixed(0) : 0}% of
+              budget
             </p>
             <Progress value={(totalSpent / budget) * 100} className="mt-2" />
           </CardContent>
@@ -67,10 +68,16 @@ function Index() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold ">
-              ${(budget - totalSpent).toFixed(2)}
+              ${budget ? (budget - totalSpent ? totalSpent : 0).toFixed(2) : 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              {(((budget - totalSpent) / budget) * 100).toFixed(0)}% remaining
+              {budget
+                ? (
+                    ((budget - totalSpent ? totalSpent : 0) / budget) *
+                    100
+                  ).toFixed(0)
+                : 0}
+              % remaining
             </p>
           </CardContent>
         </Card>

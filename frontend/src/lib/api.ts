@@ -66,7 +66,7 @@ export async function getOftenExpenses() {
 export const oftenExpensesQueryOptions = queryOptions({
   queryKey: ['often-expense'],
   queryFn: getOftenExpenses,
-  staleTime: 1000 * 60 * 5,
+  staleTime: 1,
 });
 
 export const loadingCreateExpenseQueryOptions = queryOptions<{
