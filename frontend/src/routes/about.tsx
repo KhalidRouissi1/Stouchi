@@ -13,49 +13,71 @@ export const Route = createFileRoute('/about')({
 
 function About() {
   return (
-    <div className="p-4 max-w-3xl m-auto bg-white dark:bg-gray-900 ">
-      <Card className="shadow-lg rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
+    <div className="p-6 max-w-4xl mx-auto bg-background dark:bg-background">
+      <Card className="shadow-xl rounded-xl bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+          <CardTitle className="text-3xl font-bold text-primary dark:text-primary-foreground">
             About Stouchi
           </CardTitle>
-          <CardDescription className="text-gray-600 dark:text-gray-400 text-sm">
-            A powerful and simple way to manage your expenses
+          <CardDescription className="text-muted dark:text-muted-foreground text-lg">
+            A powerful, simple, and secure way to take control of your finances
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-            Why Stouchi?
-          </h2>
-          <p className="mt-2 text-gray-700 dark:text-gray-300">
-            Stouchi is designed to help you take control of your finances.
-            Whether you're a student, freelancer, or managing household
-            expenses, Stouchi provides an easy-to-use interface to track,
-            categorize, and visualize your spending habits.
-          </p>
-          <div className="mt-4">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Features:
-            </h3>
-            <ul className="mt-2 list-disc pl-5 text-gray-700 dark:text-gray-300">
-              <li>Track daily expenses effortlessly</li>
-              <li>Get insights into your spending with visual charts</li>
-              <li>
-                Organize expenses by category (e.g., Food, Transport, etc.)
-              </li>
-              <li>Set and manage budgets</li>
-              <li>Secure and easy-to-use interface</li>
-            </ul>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Get Started
-            </h3>
-            <p className="mt-2 text-gray-700 dark:text-gray-300">
-              Ready to take charge of your finances? Create an account or log in
-              to start tracking your expenses with Stouchi today!
+          <section className="mb-6">
+            <h2 className="text-2xl font-semibold text-primary dark:text-primary-foreground">
+              Why Choose Stouchi?
+            </h2>
+            <p className="mt-4 text-muted dark:text-muted-foreground">
+              Stouchi is designed to empower you to take control of your
+              financial journey, whether you're a student, freelancer, or
+              managing household expenses. With its intuitive interface, you can
+              easily track, categorize, and visualize your spending, all in one
+              place.
             </p>
-          </div>
+          </section>
+
+          <section className="mb-6">
+            <h3 className="text-xl font-semibold text-primary dark:text-primary-foreground">
+              Key Features:
+            </h3>
+            <ul className="mt-4 list-inside list-disc text-muted dark:text-muted-foreground space-y-2">
+              <li>Track your daily expenses with ease</li>
+              <li>
+                Gain insights into your spending habits with interactive charts
+              </li>
+              <li>
+                Organize your finances by categories (e.g., Food, Transport,
+                Entertainment)
+              </li>
+              <li>Set and manage personalized budgets</li>
+              <li>Enjoy a secure and user-friendly experience</li>
+            </ul>
+          </section>
+
+          <section className="mb-6">
+            <h3 className="text-xl font-semibold text-primary dark:text-primary-foreground">
+              How It Works:
+            </h3>
+            <p className="mt-4 text-muted dark:text-muted-foreground">
+              With Stouchi, you can start by adding your expenses and
+              categorizing them into predefined or custom categories. The app
+              then generates real-time visualizations and insights that help you
+              understand where your money is going, making it easier to stay on
+              track with your financial goals.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-xl font-semibold text-primary dark:text-primary-foreground">
+              Get Started Today
+            </h3>
+            <p className="mt-4 text-muted dark:text-muted-foreground">
+              Ready to take charge of your financial future?{' '}
+              <strong>Stouchi</strong> makes it simple. Create an account, log
+              in, and start managing your expenses with confidence.
+            </p>
+          </section>
         </CardContent>
       </Card>
     </div>

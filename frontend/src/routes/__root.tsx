@@ -63,6 +63,9 @@ function NavBar({
         <Link to="/profile" className="[&.active]:font-bold">
           Profile
         </Link>
+        <Link to="/budget" className="[&.active]:font-bold">
+          Budget
+        </Link>
         <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
           {isDark ? (
             <Sun className="h-[1.2rem] w-[1.2rem]" />

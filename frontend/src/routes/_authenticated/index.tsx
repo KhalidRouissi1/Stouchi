@@ -1,45 +1,51 @@
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../../lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { Progress } from '@/components/ui/progress';
-import { DollarSign, Wallet } from 'lucide-react';
+import { DollarSign, Wallet, TrendingUp, TrendingDown } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+import { Trigger } from '@radix-ui/react-tabs';
 
+// Mock API function (replace with your actual API call)
 async function getTotalSpent() {
-  const result = await api.expenses['total-spent'].$get();
-  if (!result.ok) {
-    throw new Error('Error happened');
-  }
-
-  console.log(result);
-
-  const data = await result.json();
-
-  return data;
+  // Simulate API call
+  return {
+    total: 7500,
+    monthlyBreakdown: [
+      { month: 'Jan', amount: 2500 },
+      { month: 'Feb', amount: 3000 },
+      { month: 'Mar', amount: 2000 },
+      { month: 'Apr', amount: 7500 },
+    ],
+  };
 }
 
-function Index() {
-  const { isPending, error, data, isFetching } = useQuery({
+function DashboardPage() {
+  const { isPending, error, data } = useQuery({
     queryKey: ['total-spent'],
     queryFn: getTotalSpent,
   });
 
-  if (error) return 'An error has occurred: ' + error.message;
+  if (error) return <div>Error: {error.message}</div>;
 
-  // Ensure data.total is a number
-  const totalSpent = data ? parseFloat(data.total) : 0;
   const budget = 10000;
+  const totalSpent = data ? parseFloat(data.total) : 0;
+  const remainingBudget = budget - totalSpent;
 
   return (
-    <div className="flex flex-col gap-10">
-      <div className="flex max-w-3xl m-auto gap-64">
+    <div className="p-6 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Total Expenses Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -49,17 +55,17 @@ function Index() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${isPending ? '...' : totalSpent ? totalSpent.toFixed(2) : 0}
+              ${isPending ? '...' : totalSpent.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {totalSpent ? ((totalSpent / budget) * 100).toFixed(0) : 0}% of
-              budget
-            </p>
             <Progress value={(totalSpent / budget) * 100} className="mt-2" />
+            <p className="text-xs text-muted-foreground mt-1">
+              {((totalSpent / budget) * 100).toFixed(0)}% of budget
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="w-[350px]">
+        {/* Remaining Budget Card */}
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Remaining Budget
@@ -67,26 +73,89 @@ function Index() {
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold ">
-              ${budget ? (budget - totalSpent ? totalSpent : 0).toFixed(2) : 0}
+            <div className="text-2xl font-bold">
+              ${remainingBudget.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {budget
-                ? (
-                    ((budget - totalSpent ? totalSpent : 0) / budget) *
-                    100
-                  ).toFixed(0)
-                : 0}
-              % remaining
+            <Progress
+              value={(remainingBudget / budget) * 100}
+              className="mt-2"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              {((remainingBudget / budget) * 100).toFixed(0)}% remaining
             </p>
           </CardContent>
         </Card>
+
+        {/* Expense Trend Card */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Expense Trend</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <TrendingUp className="text-green-500 mr-2" />
+              <span className="text-sm text-muted-foreground">
+                +12.5% from last month
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Budget Utilization Card */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Budget Utilization
+            </CardTitle>
+            <TrendingDown className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <TrendingDown className="text-red-500 mr-2" />
+              <span className="text-sm text-muted-foreground">
+                Pace: $1,875/week
+              </span>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-      <Progress value={33} />
+
+      {/* Tabs for Detailed Views */}
+      <Tabs defaultValue="monthly-expenses" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="monthly-expenses">Monthly Expenses</TabsTrigger>
+          <Trigger value="category-breakdown">Category Breakdown</Trigger>
+        </TabsList>
+        <TabsContent value="monthly-expenses">
+          <Card>
+            <CardContent className="pt-6">
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={data?.monthlyBreakdown || []}>
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="amount" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="category-breakdown">
+          <Card>
+            <CardContent className="pt-6">
+              <div>Category breakdown chart placeholder</div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
 
 export const Route = createFileRoute('/_authenticated/')({
-  component: Index,
+  component: DashboardPage,
 });
+
+export default DashboardPage;

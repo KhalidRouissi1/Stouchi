@@ -87,9 +87,9 @@ function Expenses() {
                     </TableCell>
                   </TableRow>
                 ))
-            : data?.expenses.map((expense) => (
+            : data?.expenses.map((expense, index) => (
                 <TableRow key={expense.id}>
-                  <TableCell>{expense.id}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell className="font-medium">{expense.title}</TableCell>
                   <TableCell>{expense.amount}</TableCell>
                   <TableCell>{expense.date}</TableCell>
