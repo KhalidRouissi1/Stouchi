@@ -1,4 +1,5 @@
 import { type QueryClient } from '@tanstack/react-query';
+import { Toaster } from '@/components/ui/sonner';
 import {
   createRootRouteWithContext,
   Link,
@@ -37,6 +38,7 @@ function NavBar() {
           Profile
         </Link>
       </div>
+      <Toaster />
     </div>
   );
 }

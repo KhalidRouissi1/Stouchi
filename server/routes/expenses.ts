@@ -9,11 +9,17 @@ import { $ } from 'bun';
 import { createPostSchema } from './sharedValidation';
 
 /**
- * This router here handle all the expenses requests
+ * This Controller here handle all the api requestes and return a value
  * Input: Request
- * Output: Response & Status code
+ * Output: Response : {JSON} & Status code
  */
 export const expensesRoute = new Hono()
+
+  /**
+   * This Get Request retruns all expenses and the user id all orderd by the create timefrom the getUser middelwear
+   * Input: request from the c = context
+   * Output: Response : {JSON} & Status code
+   */
   .get('/', getUser, async (c) => {
     const user = c.var.user;
     const expenses = db
@@ -31,6 +37,12 @@ export const expensesRoute = new Hono()
     }));
     return c.json({ expenses: cleanResponse });
   })
+
+  /**
+   * This Get Request retruns all the total expenses of each user by getting it userId from the getUser middelwear
+   * Input: request from the c = context
+   * Output: Response : {JSON} & Status code
+   */
   .get('/total-spent', getUser, async (c) => {
     const user = c.var.user;
     const result = await db
@@ -41,6 +53,13 @@ export const expensesRoute = new Hono()
       .then((res) => res[0]);
     return c.json(result);
   })
+
+  /**
+   * This Post Request add an expense for the user by its id by the getUser middelwear and validate the user inputs
+   * Input: Bodycontent ()
+   * Output: Response : {JSON} & Status code
+   */
+
   .post('/', getUser, zValidator('json', createPostSchema), async (c) => {
     const user = c.var.user;
     const expense = c.req.valid('json');
@@ -66,6 +85,13 @@ export const expensesRoute = new Hono()
     c.status(201);
     return c.json(cleanResponse);
   })
+
+  /**
+   * This Get Request aget an expense by its id and check the userId is right and return if valid
+   * Input: request from the c = context
+   * Output: Response : {JSON} & Status code
+   */
+
   .get('/:id{[0-9]+}', getUser, async (c) => {
     const id = +c.req.param('id');
     const user = c.var.user;
@@ -91,6 +117,7 @@ export const expensesRoute = new Hono()
     return c.json({ expense: cleanResponse });
   })
   .delete('/:id{[0-9]+}', getUser, async (c) => {
+    await new Promise((r) => setTimeout(r, 5000));
     const id = +c.req.param('id');
     const user = c.var.user;
     const expense = await db
@@ -112,4 +139,22 @@ export const expensesRoute = new Hono()
     };
 
     return c.json({ expense: cleanResponse });
+  })
+  .get('/oftenExpense', getUser, async (c) => {
+    const user = c.var.user;
+    console.log(user);
+    const expenses = db
+      .select({
+        title: expensesTable.title,
+        totalAmount: sum(expensesTable.amount),
+      })
+      .from(expensesTable)
+      .where(eq(expensesTable.userId, user.id))
+      .groupBy(expensesTable.title)
+      .limit(5);
+    const cleanResponse = (await expenses).map((row) => ({
+      title: row.title,
+      amount: row.totalAmount,
+    }));
+    return c.json({ expenses: cleanResponse });
   });

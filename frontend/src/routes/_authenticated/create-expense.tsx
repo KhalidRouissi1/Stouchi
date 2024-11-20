@@ -4,11 +4,17 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { useForm } from '@tanstack/react-form';
-import { api, getAllExpensesQueryOptions } from '../../lib/api';
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import {
+  createExpense,
+  getAllExpensesQueryOptions,
+  loadingCreateExpenseQueryOptions,
+} from '../../lib/api';
+import { useQueryClient } from '@tanstack/react-query';
+import { type CreateExpense } from '../../../../server/routes/sharedValidation';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { createPostSchema } from '../../../../server/routes/sharedValidation';
-import { expenses } from '../../../../server/db/schema';
+import OftenExpense from '../../components/OftenExpense';
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
 });
@@ -16,6 +22,7 @@ export const Route = createFileRoute('/_authenticated/create-expense')({
 function CreateExpense() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
   const form = useForm({
     validatorAdapter: zodValidator(),
     defaultValues: {
@@ -24,28 +31,38 @@ function CreateExpense() {
       date: new Date().toISOString(),
     },
     onSubmit: async ({ value }) => {
-      const res = await api.expenses.$post({ json: value });
-      console.log(res);
-      if (!res.ok) {
-        throw new Error('server error');
-      }
-      const newExpense = await res.json();
       const existingExpenses = await queryClient.ensureQueryData(
         getAllExpensesQueryOptions,
       );
-      queryClient.setQueryData(
-        getAllExpensesQueryOptions.queryKey,
-        (oldData) => ({
-          ...existingExpenses,
-          expenses: [newExpense, ...existingExpenses.expenses],
-        }),
-      );
       navigate({ to: '/expenses' });
+      queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {
+        expense: value,
+      });
+      try {
+        const newExpense = await createExpense({ value });
+        queryClient.setQueryData(
+          getAllExpensesQueryOptions.queryKey,
+          (oldData) => ({
+            ...existingExpenses,
+            expenses: [newExpense, ...existingExpenses.expenses],
+          }),
+        );
+        toast('Expense created', {
+          description: `Successfully created new expense: ${newExpense.id}`,
+        });
+      } catch (e) {
+        toast('Error', {
+          description: 'Failed to create new expense ',
+        });
+      } finally {
+        queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {});
+      }
     },
   });
 
   return (
     <div className="p-2">
+      <OftenExpense />
       <h2>Create Expense</h2>
       <form
         className="flex flex-col gap-y-4 max-w-xl m-auto"
