@@ -19,7 +19,7 @@ function About() {
           <CardTitle className="text-3xl font-bold text-primary dark:text-primary-foreground">
             About Stouchi
           </CardTitle>
-          <CardDescription className="text-muted dark:text-muted-foreground text-lg">
+          <CardDescription className="text-lg text-foreground dark:text-white">
             A powerful, simple, and secure way to take control of your finances
           </CardDescription>
         </CardHeader>
@@ -28,7 +28,7 @@ function About() {
             <h2 className="text-2xl font-semibold text-primary dark:text-primary-foreground">
               Why Choose Stouchi?
             </h2>
-            <p className="mt-4 text-muted dark:text-muted-foreground">
+            <p className="mt-4 text-foreground dark:text-white">
               Stouchi is designed to empower you to take control of your
               financial journey, whether you're a student, freelancer, or
               managing household expenses. With its intuitive interface, you can
@@ -41,7 +41,7 @@ function About() {
             <h3 className="text-xl font-semibold text-primary dark:text-primary-foreground">
               Key Features:
             </h3>
-            <ul className="mt-4 list-inside list-disc text-muted dark:text-muted-foreground space-y-2">
+            <ul className="mt-4 list-inside list-disc space-y-2 text-foreground dark:text-white">
               <li>Track your daily expenses with ease</li>
               <li>
                 Gain insights into your spending habits with interactive charts
@@ -59,7 +59,7 @@ function About() {
             <h3 className="text-xl font-semibold text-primary dark:text-primary-foreground">
               How It Works:
             </h3>
-            <p className="mt-4 text-muted dark:text-muted-foreground">
+            <p className="mt-4 text-foreground dark:text-white">
               With Stouchi, you can start by adding your expenses and
               categorizing them into predefined or custom categories. The app
               then generates real-time visualizations and insights that help you
@@ -72,7 +72,7 @@ function About() {
             <h3 className="text-xl font-semibold text-primary dark:text-primary-foreground">
               Get Started Today
             </h3>
-            <p className="mt-4 text-muted dark:text-muted-foreground">
+            <p className="mt-4 text-foreground dark:text-white">
               Ready to take charge of your financial future?{' '}
               <strong>Stouchi</strong> makes it simple. Create an account, log
               in, and start managing your expenses with confidence.

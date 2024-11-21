@@ -1,4 +1,8 @@
-import { CreateExpense } from './../../../server/routes/sharedValidation';
+import { budget } from './../../../server/db/schema';
+import {
+  CreateBudget,
+  CreateExpense,
+} from './../../../server/routes/sharedValidation';
 import { hc } from 'hono/client';
 import { type ApiRoute } from '../../../server/app';
 import { queryOptions } from '@tanstack/react-query';
@@ -37,17 +41,33 @@ export async function getAllExpenses() {
 
   return data;
 }
+export async function getBudget() {
+  await new Promise((r) => setTimeout(r, 500));
+  const result = await api.budget.$get();
+  if (!result.ok) {
+    throw new Error('Error happend');
+  }
+
+  console.log(result);
+  const data = await result.json();
+  return data;
+}
+
+export const getAllBudgetQueryOption = queryOptions({
+  queryKey: ['get-all-expenses'],
+  queryFn: getBudget,
+  staleTime: 0 * 60 * 5,
+});
 
 export const getAllExpensesQueryOptions = queryOptions({
   queryKey: ['get-all-expenses'],
   queryFn: getAllExpenses,
-  staleTime: 1000 * 60 * 5,
+  staleTime: 0 * 60 * 5,
 });
 
 export async function createExpense({ value }: { value: CreateExpense }) {
   await new Promise((r) => setTimeout(r, 3000));
   const res = await api.expenses.$post({ json: value });
-  console.log(res);
   if (!res.ok) {
     throw new Error('server error');
   }
@@ -79,6 +99,16 @@ export const loadingCreateExpenseQueryOptions = queryOptions<{
   staleTime: Infinity,
 });
 
+export const loadingCreateBudgetQueryOptions = queryOptions<{
+  budget?: CreateBudget;
+}>({
+  queryKey: ['loading-create-expesne'],
+  queryFn: async () => {
+    return {};
+  },
+  staleTime: Infinity,
+});
+
 export async function deleteExpense({ id }: { id: number }) {
   const res = await api.expenses[':id{[0-9]+}'].$delete({
     param: { id: id.toString() },
@@ -86,4 +116,24 @@ export async function deleteExpense({ id }: { id: number }) {
   if (!res.ok) {
     throw new Error('Server error');
   }
+}
+
+// Budget
+export async function createBudget({ value }: { value: CreateBudget }) {
+  await new Promise((r) => setTimeout(r, 3000));
+  const res = await api.budget.$post({ json: value });
+  if (!res.ok) {
+    throw new Error('server error');
+  }
+  const newBudget = await res.json();
+  return newBudget;
+}
+
+export async function getTotalSpent() {
+  const result = await api.expenses['total-spent'].$get();
+  if (!result.ok) {
+    throw new Error('Failed to fetch total spent');
+  }
+  const data = await result.json();
+  return data.total;
 }

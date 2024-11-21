@@ -1,11 +1,9 @@
-import { expenses } from './../db/schema';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { getUser } from '../kind';
 import { db } from '../db';
 import { expenses as expensesTable, insertExpensesSchema } from '../db/schema';
 import { and, desc, eq, sum } from 'drizzle-orm';
-import { $ } from 'bun';
 import { createPostSchema } from './sharedValidation';
 
 /**
@@ -34,6 +32,7 @@ export const expensesRoute = new Hono()
       amount: row.amount,
       userId: row.userId,
       date: row.date,
+      category: row.category,
     }));
     return c.json({ expenses: cleanResponse });
   })
@@ -52,6 +51,37 @@ export const expensesRoute = new Hono()
       .limit(1)
       .then((res) => res[0]);
     return c.json(result);
+  })
+  /**
+   * This Post Request add an expense for the user by its id by the getUser middelwear and validate the user inputs
+   * Input: Bodycontent ()
+   * Output: Response : {JSON} & Status code
+   */
+
+  .get('/getbycat/:cat', getUser, async (c) => {
+    const user = c.var.user;
+    const category = c.req.param('cat');
+
+    const expenses = await db
+      .select()
+      .from(expensesTable)
+      .where(
+        and(
+          eq(expensesTable.userId, user.id),
+          eq(expensesTable.category, category)
+        )
+      )
+      .orderBy(desc(expensesTable.createdAt));
+
+    const cleanResponse = expenses.map((row) => ({
+      id: row.id,
+      title: row.title,
+      amount: row.amount,
+      date: row.date,
+      category: row.category,
+    }));
+
+    return c.json({ expenses: cleanResponse });
   })
 
   /**
@@ -80,6 +110,7 @@ export const expensesRoute = new Hono()
       amount: res.amount,
       userId: res.userId,
       date: res.date,
+      category: res.category,
     };
 
     c.status(201);

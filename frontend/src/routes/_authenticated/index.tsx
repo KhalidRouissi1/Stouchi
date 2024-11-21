@@ -1,51 +1,62 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Progress } from '@/components/ui/progress';
-import { DollarSign, Wallet, TrendingUp, TrendingDown } from 'lucide-react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
-import { Trigger } from '@radix-ui/react-tabs';
+import { DollarSign, Wallet } from 'lucide-react';
 
-// Mock API function (replace with your actual API call)
-async function getTotalSpent() {
-  // Simulate API call
-  return {
-    total: 7500,
-    monthlyBreakdown: [
-      { month: 'Jan', amount: 2500 },
-      { month: 'Feb', amount: 3000 },
-      { month: 'Mar', amount: 2000 },
-      { month: 'Apr', amount: 7500 },
-    ],
-  };
-}
+import {
+  getAllBudgetQueryOption,
+  getAllExpensesQueryOptions,
+  getTotalSpent,
+} from '../../lib/api';
+import { Skeleton } from '../../components/ui/skeleton';
 
 function DashboardPage() {
-  const { isPending, error, data } = useQuery({
+  const {
+    isLoading: isTotalSpentLoading,
+    error: totalSpentError,
+    data: totalSpentData,
+  } = useQuery({
     queryKey: ['total-spent'],
     queryFn: getTotalSpent,
   });
 
-  if (error) return <div>Error: {error.message}</div>;
+  const {
+    data: dataBudget,
+    error: budgetError,
+    isLoading: isBudgetLoading,
+  } = useQuery(getAllBudgetQueryOption);
 
-  const budget = 10000;
-  const totalSpent = data ? parseFloat(data.total) : 0;
+  const {
+    isLoading: isAllExpenseLoading,
+    error: allExpenseError,
+    data: allExpense,
+  } = useQuery(getAllExpensesQueryOptions);
+
+  if (isTotalSpentLoading || isBudgetLoading || isAllExpenseLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (totalSpentError || budgetError || allExpenseError) {
+    return (
+      <div>
+        Error:{' '}
+        {totalSpentError?.message ||
+          budgetError?.message ||
+          allExpenseError?.message}
+      </div>
+    );
+  }
+
+  const budget = dataBudget?.budget?.amount
+    ? parseFloat(dataBudget?.budget?.amount)
+    : 0;
+  const totalSpent = totalSpentData ? parseFloat(totalSpentData) : 0;
   const remainingBudget = budget - totalSpent;
 
   return (
     <div className="p-6 space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Expenses Card */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -54,17 +65,28 @@ function DashboardPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ${isPending ? '...' : totalSpent.toFixed(2)}
+            <div className="text-2xl font-bold flex gap-2">
+              $
+              {isTotalSpentLoading ? (
+                <Skeleton className="w-[80px] h-[30px] rounded-full" />
+              ) : (
+                totalSpent.toFixed(2)
+              )}
             </div>
-            <Progress value={(totalSpent / budget) * 100} className="mt-2" />
+            <Progress
+              value={
+                budget > 0 ? Math.min((totalSpent / budget) * 100, 100) : 0
+              }
+              className="mt-2"
+            />
             <p className="text-xs text-muted-foreground mt-1">
-              {((totalSpent / budget) * 100).toFixed(0)}% of budget
+              {budget > 0
+                ? `${Math.min((totalSpent / budget) * 100, 100).toFixed(0)}% of budget`
+                : 'No budget set'}
             </p>
           </CardContent>
         </Card>
 
-        {/* Remaining Budget Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -73,83 +95,27 @@ function DashboardPage() {
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ${remainingBudget.toFixed(2)}
-            </div>
+            {isBudgetLoading ? (
+              <Skeleton className="w-[80px] h-[30px] rounded-full" />
+            ) : (
+              <div className="text-2xl font-bold">
+                ${remainingBudget.toFixed(2)}
+              </div>
+            )}
             <Progress
-              value={(remainingBudget / budget) * 100}
+              value={
+                budget > 0 ? Math.min((remainingBudget / budget) * 100, 100) : 0
+              }
               className="mt-2"
             />
             <p className="text-xs text-muted-foreground mt-1">
-              {((remainingBudget / budget) * 100).toFixed(0)}% remaining
+              {budget > 0
+                ? `${Math.min((remainingBudget / budget) * 100, 100).toFixed(0)}% remaining`
+                : 'No budget set'}
             </p>
           </CardContent>
         </Card>
-
-        {/* Expense Trend Card */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Expense Trend</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <TrendingUp className="text-green-500 mr-2" />
-              <span className="text-sm text-muted-foreground">
-                +12.5% from last month
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Budget Utilization Card */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Budget Utilization
-            </CardTitle>
-            <TrendingDown className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <TrendingDown className="text-red-500 mr-2" />
-              <span className="text-sm text-muted-foreground">
-                Pace: $1,875/week
-              </span>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-
-      {/* Tabs for Detailed Views */}
-      <Tabs defaultValue="monthly-expenses" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="monthly-expenses">Monthly Expenses</TabsTrigger>
-          <Trigger value="category-breakdown">Category Breakdown</Trigger>
-        </TabsList>
-        <TabsContent value="monthly-expenses">
-          <Card>
-            <CardContent className="pt-6">
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={data?.monthlyBreakdown || []}>
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="amount" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="category-breakdown">
-          <Card>
-            <CardContent className="pt-6">
-              <div>Category breakdown chart placeholder</div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
     </div>
   );
 }
