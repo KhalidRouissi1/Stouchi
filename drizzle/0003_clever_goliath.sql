@@ -1,0 +1,1 @@
+ALTER TABLE "expenses" ALTER COLUMN "amount" DROP NOT NULL;

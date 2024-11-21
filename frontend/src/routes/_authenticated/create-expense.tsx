@@ -1,9 +1,20 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { useForm } from '@tanstack/react-form';
+
 import { toast } from 'sonner';
 import {
   createExpense,
@@ -19,7 +30,7 @@ import { createPostSchema } from '../../../../server/routes/sharedValidation';
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
 });
-
+const categories = ['Food', 'Bills', 'Entertainment', 'Others'];
 function CreateExpense() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -32,6 +43,7 @@ function CreateExpense() {
       title: '',
       amount: '',
       date: new Date().toISOString(),
+      category: '',
     },
     onSubmit: async ({ value }) => {
       const existingExpenses = await queryClient.ensureQueryData(
@@ -69,15 +81,19 @@ function CreateExpense() {
   };
   return (
     <div className="  p-2">
-      <div className="flex justify-center items-center gap-6 my-3">
-        {oftenExpenses?.expenses?.map((expense) => (
-          <Button
-            key={expense.title}
-            onClick={() => handleOftenExpenseClick(expense.title)}
-          >
-            {`${expense.title} `}
-          </Button>
-        ))}
+      <div>
+        <h2 className="text-[16px] font-bold&">Most expenses you buy</h2>
+
+        <div className="flex justify-center items-center gap-6 my-3">
+          {oftenExpenses?.expenses?.map((expense) => (
+            <Button
+              key={expense.title}
+              onClick={() => handleOftenExpenseClick(expense.title)}
+            >
+              {`${expense.title} `}
+            </Button>
+          ))}
+        </div>
       </div>
       <h2 className="text-[30px] font-bold&">Create Expense</h2>
       <form
@@ -131,6 +147,35 @@ function CreateExpense() {
             </div>
           )}
         />
+        <form.Field
+          name="category"
+          children={(field) => (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor={field.name}>Category</Label>
+              <Select
+                value={field.state.value}
+                onValueChange={(value) => field.handleChange(value)}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Categories</SelectLabel>
+                    {categories?.map((category, index) => (
+                      <SelectItem key={index} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {field.state.meta.isTouched && field.state.meta.errors.length ? (
+                <em>{field.state.meta.errors.join(', ')}</em>
+              ) : null}
+            </div>
+          )}
+        />{' '}
         <form.Field
           name="date"
           validators={{
