@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   createBudget as createBudgetToSend,
-  getAllBudgetQueryOption,
   loadingCreateBudgetQueryOptions,
 } from '../../lib/api';
 import { Input } from '@/components/ui/input';
@@ -41,7 +40,7 @@ function RouteComponent() {
         navigate({ to: '/' });
       } catch (e) {
         toast('Error', {
-          description: 'Failed to create new expense ',
+          description: 'Failed to create new Budget ',
         });
       } finally {
         queryClient.setQueryData(loadingCreateBudgetQueryOptions.queryKey, {});
@@ -64,7 +63,7 @@ function RouteComponent() {
         }}
         children={(field) => (
           <div>
-            <Label htmlFor={field.name}>Amount</Label>
+            <Label htmlFor={field.name}>Your new Budget</Label>
             <Input
               id={field.name}
               name={field.name}

@@ -54,15 +54,14 @@ export async function getBudget() {
 }
 
 export const getAllBudgetQueryOption = queryOptions({
-  queryKey: ['get-all-expenses'],
+  queryKey: ['get-all-budget'],
   queryFn: getBudget,
-  staleTime: 0 * 60 * 5,
 });
 
 export const getAllExpensesQueryOptions = queryOptions({
   queryKey: ['get-all-expenses'],
   queryFn: getAllExpenses,
-  staleTime: 0 * 60 * 5,
+  staleTime: 5 * 60 * 1000,
 });
 
 export async function createExpense({ value }: { value: CreateExpense }) {
@@ -86,7 +85,7 @@ export async function getOftenExpenses() {
 export const oftenExpensesQueryOptions = queryOptions({
   queryKey: ['often-expense'],
   queryFn: getOftenExpenses,
-  staleTime: 1,
+  staleTime: 10 * 60 * 1000,
 });
 
 export const loadingCreateExpenseQueryOptions = queryOptions<{

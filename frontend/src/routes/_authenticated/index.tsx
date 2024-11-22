@@ -3,7 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Progress } from '@/components/ui/progress';
 import { DollarSign, Wallet } from 'lucide-react';
-
+import PieChart from 'highcharts-react-official';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '../../components/ui/tabs';
 import {
   getAllBudgetQueryOption,
   getAllExpensesQueryOptions,
@@ -11,8 +17,16 @@ import {
 } from '../../lib/api';
 import { Skeleton } from '../../components/ui/skeleton';
 import KhalidProSpinner from '../../components/KhalidProSpinner';
+import { CardDescription } from '../../components/ui/card';
+import Highcharts from 'highcharts';
+import { categories } from '../../lib/utils';
 
 function DashboardPage() {
+  const byCategory = new Map();
+  categories.forEach((category) => {
+    byCategory.set(category, 0);
+  });
+
   const {
     isLoading: isTotalSpentLoading,
     error: totalSpentError,
@@ -29,12 +43,12 @@ function DashboardPage() {
   } = useQuery(getAllBudgetQueryOption);
 
   const {
-    isLoading: isAllExpenseLoading,
-    error: allExpenseError,
-    data: allExpense,
+    data: allExpenses,
+    error: allExpensesError,
+    isLoading: isAllExpensesLoading,
   } = useQuery(getAllExpensesQueryOptions);
 
-  if (isTotalSpentLoading || isBudgetLoading || isAllExpenseLoading) {
+  if (isTotalSpentLoading || isBudgetLoading || isAllExpensesLoading) {
     return (
       <div>
         <KhalidProSpinner />
@@ -42,16 +56,48 @@ function DashboardPage() {
     );
   }
 
-  if (totalSpentError || budgetError || allExpenseError) {
+  if (totalSpentError || budgetError || allExpensesError) {
     return (
       <div>
         Error:{' '}
         {totalSpentError?.message ||
           budgetError?.message ||
-          allExpenseError?.message}
+          allExpensesError?.message}
       </div>
     );
   }
+
+  allExpenses?.expenses.forEach((expense) => {
+    if (byCategory.has(expense.category)) {
+      byCategory.set(
+        expense.category,
+        byCategory.get(expense.category) + parseFloat(expense.amount),
+      );
+    }
+  });
+
+  const pieChartData = Array.from(byCategory.entries()).map(
+    ([category, total]) => ({
+      name: category,
+      y: total,
+    }),
+  );
+
+  const pieChartOptions = {
+    chart: {
+      type: 'pie',
+    },
+    title: {
+      text: 'Expenses by Category',
+    },
+    series: [
+      {
+        name: 'Expenses',
+        colorByPoint: true,
+        data: pieChartData,
+      },
+    ],
+  };
 
   const budget = dataBudget?.budget?.amount
     ? parseFloat(dataBudget?.budget?.amount)
@@ -115,12 +161,36 @@ function DashboardPage() {
             />
             <p className="text-xs text-muted-foreground mt-1">
               {budget > 0
-                ? `${Math.min((remainingBudget / budget) * 100, 100).toFixed(0)}% remaining`
+                ? `${Math.min((remainingBudget / budget) * 100, 100).toFixed(
+                    0,
+                  )}% remaining`
                 : 'No budget set'}
             </p>
           </CardContent>
         </Card>
       </div>
+      <Tabs defaultValue="expenses" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="expenses">Advice?</TabsTrigger>
+          <TabsTrigger value="chart">Expenses </TabsTrigger>
+        </TabsList>
+        <TabsContent value="expenses">
+          <Card>
+            <CardHeader>
+              <CardTitle>Expenses Details</CardTitle>
+              <CardDescription>Breakdown of your expenses</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2"></CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="chart">
+          <Card>
+            <CardContent className="space-y-4">
+              <PieChart highcharts={Highcharts} options={pieChartOptions} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

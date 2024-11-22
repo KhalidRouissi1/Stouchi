@@ -34,7 +34,6 @@ export const budgetRoute = new Hono()
       .from(budgetTable)
       .where(eq(budgetTable.userId, user.id))
       .limit(1);
-
     if (existingBudget.length > 0) {
       await db.delete(budgetTable).where(eq(budgetTable.userId, user.id));
     }
