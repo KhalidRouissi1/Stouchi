@@ -26,6 +26,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { type CreateExpense } from '../../../../server/routes/sharedValidation';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { createPostSchema } from '../../../../server/routes/sharedValidation';
+import ShinyButton from '../../components/magicui/shiny-button';
 
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
@@ -43,7 +44,7 @@ function CreateExpense() {
       title: '',
       amount: '',
       date: new Date().toISOString(),
-      category: '',
+      category: 'Others',
     },
     onSubmit: async ({ value }) => {
       const existingExpenses = await queryClient.ensureQueryData(
@@ -63,6 +64,9 @@ function CreateExpense() {
             expenses: [newExpense, ...existingExpenses.expenses],
           }),
         );
+
+        console.log('Gisss');
+
         toast('Expense created', {
           description: `Successfully created new expense: ${newExpense.id}`,
         });
@@ -86,12 +90,12 @@ function CreateExpense() {
 
         <div className="flex justify-center items-center gap-6 my-3">
           {oftenExpenses?.expenses?.map((expense) => (
-            <Button
+            <ShinyButton
               key={expense.title}
               onClick={() => handleOftenExpenseClick(expense.title)}
             >
               {`${expense.title} `}
-            </Button>
+            </ShinyButton>
           ))}
         </div>
       </div>
@@ -157,7 +161,7 @@ function CreateExpense() {
                 onValueChange={(value) => field.handleChange(value)}
               >
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select Category" />
+                  <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>

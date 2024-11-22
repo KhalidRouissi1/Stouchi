@@ -10,6 +10,7 @@ import {
   getTotalSpent,
 } from '../../lib/api';
 import { Skeleton } from '../../components/ui/skeleton';
+import KhalidProSpinner from '../../components/KhalidProSpinner';
 
 function DashboardPage() {
   const {
@@ -34,7 +35,11 @@ function DashboardPage() {
   } = useQuery(getAllExpensesQueryOptions);
 
   if (isTotalSpentLoading || isBudgetLoading || isAllExpenseLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <KhalidProSpinner />
+      </div>
+    );
   }
 
   if (totalSpentError || budgetError || allExpenseError) {
