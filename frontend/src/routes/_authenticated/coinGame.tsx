@@ -49,7 +49,7 @@ const Game = () => {
       k.onKeyDown('down', () => player.move(0, 200));
 
       // Not working need to fix the collision when the hero and coin be on the same corrdanets
-      k.onCollide('player', 'coin', (_, coin) => {
+      k.onCollide('player', 'coin', (player, coin) => {
         k.destroy(coin);
         spawnCoin();
         setScore((prevScore) => prevScore + 1);

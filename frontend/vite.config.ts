@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), TanStackRouterVite()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      '@': path.resolve(__dirname, 'src'), // This should be correct, check if it's resolving to the right folder
     },
   },
   server: {

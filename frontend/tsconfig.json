@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "baseUrl": ".", // Base directory for the project
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"] // Alias '@' pointing to the root of your project
+      "@/*": ["src/*"]
     },
-    "target": "ES2021", // You can adjust this depending on your environment
-    "module": "ESNext", // Module system, adjust as needed
-    "moduleResolution": "node", // Resolve modules as in Node.js
-    "strict": true, // Enable strict type-checking options
-    "jsx": "react-jsx" // Ensure this is correct if you're using React 17 or later
+    "target": "ES2021",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "react-jsx"
   },
   "include": ["src"],
   "references": [
