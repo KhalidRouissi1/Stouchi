@@ -1,8 +1,6 @@
+import React from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import {
-  createBudget as createBudgetToSend,
-  loadingCreateBudgetQueryOptions,
-} from '../../lib/api';
+import { loadingCreateBudgetQueryOptions } from '../../lib/api';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm } from '@tanstack/react-form';
@@ -33,12 +31,12 @@ function RouteComponent() {
         budget: value,
       });
       try {
-        const newBudget = await createBudgetToSend({ value });
         toast('Expense created', {
           description: `Successfully Added to your budget`,
         });
         navigate({ to: '/' });
       } catch (e) {
+        console.log(e);
         toast('Error', {
           description: 'Failed to create new Budget ',
         });
@@ -58,10 +56,9 @@ function RouteComponent() {
     >
       <form.Field
         name="amount"
-        validators={{
-          onChange: createBudget.shape.amount,
-        }}
-        children={(field) => (
+        validators={{ onChange: createBudget.shape.amount }}
+      >
+        {(field) => (
           <div>
             <Label htmlFor={field.name}>Your new Budget</Label>
             <Input
@@ -70,23 +67,26 @@ function RouteComponent() {
               value={field.state.value}
               onBlur={field.handleBlur}
               type="number"
-              onChange={(e: any) => field.handleChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                field.handleChange(e.target.value)
+              }
             />
             {field.state.meta.isTouched && field.state.meta.errors.length ? (
               <em>{field.state.meta.errors.join(', ')}</em>
             ) : null}
           </div>
         )}
-      />
+      </form.Field>
 
       <form.Subscribe
         selector={(state) => [state.canSubmit, state.isSubmitting]}
-        children={([canSubmit, isSubmitting]) => (
+      >
+        {([canSubmit, isSubmitting]) => (
           <Button type="submit" className="mt-4 z-2" disabled={!canSubmit}>
             {isSubmitting ? '...' : 'Add to your budget'}
           </Button>
         )}
-      />
+      </form.Subscribe>
     </form>
   );
 }

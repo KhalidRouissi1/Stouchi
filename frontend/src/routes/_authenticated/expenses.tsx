@@ -26,19 +26,17 @@ export const Route = createFileRoute('/_authenticated/expenses')({
 function Expenses() {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  const { isPending, error, data, isFetching } = useQuery(
-    getAllExpensesQueryOptions,
-  );
+  const { isPending, error, data } = useQuery(getAllExpensesQueryOptions);
 
   const { data: loadingCreateExpense } = useQuery(
-    loadingCreateExpenseQueryOptions,
+    loadingCreateExpenseQueryOptions
   );
 
   const filteredExpenses =
     selectedCategory === 'All'
       ? data?.expenses
       : data?.expenses?.filter(
-          (expense) => expense.category === selectedCategory,
+          (expense) => expense.category === selectedCategory
         );
 
   if (error) return 'An error has occurred: ' + error.message;
@@ -88,7 +86,7 @@ function Expenses() {
               <TableCell>
                 {loadingCreateExpense?.expense.date.slice(
                   0,
-                  loadingCreateExpense.expense.date.indexOf('T'),
+                  loadingCreateExpense.expense.date.indexOf('T')
                 )}
               </TableCell>
               <TableCell>{loadingCreateExpense?.expense.category}</TableCell>

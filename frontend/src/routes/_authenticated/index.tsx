@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -20,7 +21,6 @@ import KhalidProSpinner from '../../components/KhalidProSpinner';
 import { CardDescription } from '../../components/ui/card';
 import Highcharts from 'highcharts';
 import { categories } from '../../lib/utils';
-import AdviceAi from '../../components/AdviceAi';
 import AdviceAI from '../../components/AdviceAi';
 
 function DashboardPage() {
@@ -73,7 +73,7 @@ function DashboardPage() {
     if (byCategory.has(expense.category)) {
       byCategory.set(
         expense.category,
-        byCategory.get(expense.category) + parseFloat(expense.amount),
+        byCategory.get(expense.category) + parseFloat(expense.amount)
       );
     }
   });
@@ -82,7 +82,7 @@ function DashboardPage() {
     ([category, total]) => ({
       name: category,
       y: total,
-    }),
+    })
   );
 
   const pieChartOptions = {
@@ -164,7 +164,7 @@ function DashboardPage() {
             <p className="text-xs text-muted-foreground mt-1">
               {budget > 0
                 ? `${Math.min((remainingBudget / budget) * 100, 100).toFixed(
-                    0,
+                    0
                   )}% remaining`
                 : 'No budget set'}
             </p>

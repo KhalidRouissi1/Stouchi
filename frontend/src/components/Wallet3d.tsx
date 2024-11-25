@@ -1,3 +1,4 @@
+import React from 'react';
 import * as THREE from 'three';
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
@@ -15,7 +16,7 @@ type GLTFResult = GLTF & {
 // Separate Wallet model component
 function WalletModel(props: JSX.IntrinsicElements['group']) {
   const { nodes, materials } = useGLTF(
-    '../public/Generate_a_3d_Wallet__1119102127_refine.glb',
+    '../public/Generate_a_3d_Wallet__1119102127_refine.glb'
   ) as GLTFResult;
 
   return (

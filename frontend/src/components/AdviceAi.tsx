@@ -1,13 +1,24 @@
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm } from '@tanstack/react-form';
 import { zodValidator } from '@tanstack/zod-form-adapter';
-import { useState } from 'react';
 import { callOpenai } from '../lib/api';
 import KhalidProSpinner from './KhalidProSpinner';
 import { Button } from './ui/button';
 
-export default function AdviceAI({ financialData }) {
+type FinancialData = {
+  budget: number;
+  totalSpent: number;
+  remainingBudget: number;
+  expensesByCategory: Record<string, number>;
+};
+
+interface AdviceAIProps {
+  financialData: FinancialData;
+}
+
+export default function AdviceAI({ financialData }: AdviceAIProps) {
   const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,8 +42,12 @@ export default function AdviceAI({ financialData }) {
           },
         });
         setResponse(result || 'No advice generated');
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch advice');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message || 'Failed to fetch advice');
+        } else {
+          setError('Failed to fetch advice');
+        }
       } finally {
         setLoading(false);
       }
@@ -61,10 +76,9 @@ export default function AdviceAI({ financialData }) {
           form.handleSubmit();
         }}
       >
-        <form.Field
-          name="prompt"
-          children={(field) => (
-            <div className="flex flex-col gap-4 ">
+        <form.Field name="prompt">
+          {(field) => (
+            <div className="flex flex-col gap-4">
               <Label
                 htmlFor={field.name}
                 className="mt-4 text-black dark:text-white"
@@ -75,19 +89,21 @@ export default function AdviceAI({ financialData }) {
                 id={field.name}
                 value={field.state.value}
                 onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  field.handleChange(e.target.value)
+                }
                 placeholder="e.g., Should I make a major purchase given my current budget?"
               />
             </div>
           )}
-        />
+        </form.Field>
 
         <Button
           type="submit"
-          className=" text-white p-2 rounded "
+          className="text-white p-2 rounded"
           disabled={loading}
         >
-          {loading ? <KhalidProSpinner h={4} /> : 'Ask AI'}
+          {loading ? <KhalidProSpinner h={'4'} /> : 'Ask AI'}
         </Button>
       </form>
 

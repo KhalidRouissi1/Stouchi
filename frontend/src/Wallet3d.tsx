@@ -1,3 +1,4 @@
+import React from 'react';
 import { Suspense, useRef } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -15,7 +16,7 @@ type GLTFResult = GLTF & {
 function Model(props: JSX.IntrinsicElements['group']) {
   const groupRef = useRef<THREE.Group>(null);
   const { nodes } = useGLTF(
-    '/Generate_a_3d_Wallet__1119102127_refine.glb',
+    '/Generate_a_3d_Wallet__1119102127_refine.glb'
   ) as GLTFResult;
 
   // Add rotation logic using useFrame

@@ -1,3 +1,4 @@
+import React from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import {
   Card,
@@ -34,7 +35,7 @@ function About() {
             </h2>
             <p className="mt-4 text-foreground dark:text-white">
               Stouchi is designed to empower you to take control of your
-              financial journey, whether you're a student, freelancer, or
+              financial journey, whether you&apos;re a student, freelancer, or
               managing household expenses. With its intuitive interface, you can
               easily track, categorize, and visualize your spending, all in one
               place.

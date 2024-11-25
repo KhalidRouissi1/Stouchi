@@ -1,9 +1,9 @@
+import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from './ui/button';
 import { Trash } from 'lucide-react';
 import { deleteExpense, getAllExpensesQueryOptions } from '../lib/api';
 import { toast } from 'sonner';
-type Props = {};
 
 const ExpenseDeleteButton = ({ id }: { id: number }) => {
   const queryClient = useQueryClient();
@@ -24,7 +24,7 @@ const ExpenseDeleteButton = ({ id }: { id: number }) => {
         (existingExpenses) => ({
           ...existingExpenses,
           expenses: existingExpenses!.expenses.filter((e) => e.id !== id),
-        }),
+        })
       );
     },
   });
