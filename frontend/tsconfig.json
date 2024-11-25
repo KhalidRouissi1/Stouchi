@@ -10,6 +10,7 @@
     "strict": true, // Enable strict type-checking options
     "jsx": "react-jsx" // Ensure this is correct if you're using React 17 or later
   },
+  "include": ["src"],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
