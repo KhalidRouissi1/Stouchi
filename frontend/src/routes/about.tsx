@@ -13,10 +13,8 @@ export const Route = createFileRoute('/about')({
 });
 
 function About() {
-  const isFirefox =
-    typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent);
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-background dark:bg-background">
+    <div className="flexp-6 max-w-4xl mx-auto bg-background dark:bg-background">
       <div className="mb-8 w-full h-[400px] relative bg-gradient-to-b from-transparent to-background/10 rounded-lg overflow-hidden">
         <Wallet3d />
       </div>

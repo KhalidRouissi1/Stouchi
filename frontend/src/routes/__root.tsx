@@ -49,7 +49,9 @@ function NavBar({
   return (
     <div className="flex justify-between items-center p-4 max-w-6xl m-auto">
       <Link to="/" className="[&.active]:font-bold">
-        <h1 className="text-2xl font-bold">Stouchi</h1>
+        <h1 className="text-2xl font-bold">
+          Stouch <span className="ml-[-3px]  text-primary">i</span>
+        </h1>
       </Link>
 
       <div className="hidden md:flex gap-6 items-center">
