@@ -3,7 +3,6 @@
   font-size: 2rem;
   animation: spin 0.5s linear infinite;
   display: flex;
-  height: 80vh;
   width: 100%;
   justify-content: center;
   align-items: center;

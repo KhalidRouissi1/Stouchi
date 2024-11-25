@@ -19,6 +19,9 @@
     "@electric-sql/pglite": "^0.2.13",
     "@hono/zod-validator": "^0.4.1",
     "@kinde-oss/kinde-typescript-sdk": "^2.9.1",
+    "@react-three/drei": "^9.117.3",
+    "@react-three/fiber": "^8.17.10",
+    "@types/three": "^0.170.0",
     "drizzle-orm": "^0.36.3",
     "drizzle-zod": "^0.5.1",
     "hono": "^4.6.10",
@@ -26,6 +29,7 @@
     "pg": "^8.13.1",
     "postgres": "^3.4.5",
     "react-joyride": "^2.9.3",
+    "three": "^0.170.0",
     "zod": "^3.23.8"
   }
 }

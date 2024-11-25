@@ -1,4 +1,3 @@
-import { budget } from './../../../server/db/schema';
 import {
   CreateBudget,
   CreateExpense,
@@ -135,4 +134,46 @@ export async function getTotalSpent() {
   }
   const data = await result.json();
   return data.total;
+}
+
+// Make a call to openai url
+
+export async function callOpenai({ prompt, context }) {
+  const enhancedPrompt = `
+Based on the following financial context:
+- Total Budget: $${context.totalBudget}
+- Total Spent: $${context.totalSpent}
+- Remaining Budget: $${context.remainingBudget}
+- Expenses by Category: ${JSON.stringify(context.expensesByCategory)}
+
+User Question: ${prompt}
+
+Please provide financial advice considering this context. make it short not a lot of words make it in bullet points`;
+  const apiKey = import.meta.env.VITE_API_KEY;
+  console.log(import.meta.env.VITE_TEST_VAR);
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'gpt-4',
+      messages: [
+        { role: 'system', content: 'You are a financial assistant.' },
+        { role: 'user', content: enhancedPrompt },
+      ],
+      max_tokens: 150,
+      temperature: 0.7,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error?.message || 'Failed to fetch OpenAI response');
+  }
+
+  const result = await response.json();
+  console.log(result.choices[0].message.content);
+  return result.choices[0].message.content;
 }

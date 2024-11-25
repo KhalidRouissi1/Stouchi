@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { type QueryClient } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
+import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import {
   createRootRouteWithContext,
   Link,
@@ -33,6 +34,7 @@ const Root = () => {
       <div className="mt-10 p-2 max-w-3xl m-auto">
         <Outlet />
       </div>
+      <TanStackRouterDevtools />
     </>
   );
 };
@@ -51,6 +53,9 @@ function NavBar({
       </Link>
 
       <div className="hidden md:flex gap-6 items-center">
+        <Link to="/" className="[&.active]:font-bold">
+          Home
+        </Link>
         <Link to="/about" className="[&.active]:font-bold">
           About
         </Link>

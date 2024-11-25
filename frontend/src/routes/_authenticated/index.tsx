@@ -20,6 +20,8 @@ import KhalidProSpinner from '../../components/KhalidProSpinner';
 import { CardDescription } from '../../components/ui/card';
 import Highcharts from 'highcharts';
 import { categories } from '../../lib/utils';
+import AdviceAi from '../../components/AdviceAi';
+import AdviceAI from '../../components/AdviceAi';
 
 function DashboardPage() {
   const byCategory = new Map();
@@ -51,7 +53,7 @@ function DashboardPage() {
   if (isTotalSpentLoading || isBudgetLoading || isAllExpensesLoading) {
     return (
       <div>
-        <KhalidProSpinner />
+        <KhalidProSpinner h={80} />
       </div>
     );
   }
@@ -169,25 +171,34 @@ function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-      <Tabs defaultValue="expenses" className="w-full">
+      <Tabs defaultValue="chart" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="expenses">Advice?</TabsTrigger>
           <TabsTrigger value="chart">Expenses </TabsTrigger>
+          <TabsTrigger value="expenses">Advice?</TabsTrigger>
         </TabsList>
-        <TabsContent value="expenses">
-          <Card>
-            <CardHeader>
-              <CardTitle>Expenses Details</CardTitle>
-              <CardDescription>Breakdown of your expenses</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2"></CardContent>
-          </Card>
-        </TabsContent>
         <TabsContent value="chart">
           <Card>
             <CardContent className="space-y-4">
               <PieChart highcharts={Highcharts} options={pieChartOptions} />
             </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="expenses">
+          <Card>
+            <CardHeader>
+              <CardTitle>Expenses Details</CardTitle>
+              <CardDescription>
+                <AdviceAI
+                  financialData={{
+                    budget,
+                    totalSpent,
+                    remainingBudget,
+                    expensesByCategory: Object.fromEntries(byCategory),
+                  }}
+                />
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2"></CardContent>
           </Card>
         </TabsContent>
       </Tabs>

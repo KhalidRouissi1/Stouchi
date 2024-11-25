@@ -6,14 +6,20 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
+import Wallet3d from '../Wallet3d';
 
 export const Route = createFileRoute('/about')({
   component: About,
 });
 
 function About() {
+  const isFirefox =
+    typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent);
   return (
     <div className="p-6 max-w-4xl mx-auto bg-background dark:bg-background">
+      <div className="mb-8 w-full h-[400px] relative bg-gradient-to-b from-transparent to-background/10 rounded-lg overflow-hidden">
+        <Wallet3d />
+      </div>
       <Card className="shadow-xl rounded-xl bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-primary dark:text-primary-foreground">
