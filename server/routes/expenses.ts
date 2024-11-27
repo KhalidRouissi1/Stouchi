@@ -1,10 +1,10 @@
-import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
-import { getUser } from '../kind';
-import { db } from '../db';
-import { expenses as expensesTable, insertExpensesSchema } from '../db/schema';
-import { and, desc, eq, sum } from 'drizzle-orm';
-import { createPostSchema } from './sharedValidation';
+import { zValidator } from '@hono/zod-validator'
+import { and, desc, eq, sum } from 'drizzle-orm'
+import { Hono } from 'hono'
+import { db } from '../db'
+import { expenses as expensesTable, insertExpensesSchema } from '../db/schema'
+import { getUser } from '../kind'
+import { createPostSchema } from './sharedValidation'
 
 /**
  * This Controller here handle all the api requestes and return a value
@@ -19,13 +19,13 @@ export const expensesRoute = new Hono()
    * Output: Response : {JSON} & Status code
    */
   .get('/', getUser, async (c) => {
-    const user = c.var.user;
+    const user = c.var.user
     const expenses = db
       .select()
       .from(expensesTable)
       .where(eq(expensesTable.userId, user.id))
       .limit(200)
-      .orderBy(desc(expensesTable.createdAt));
+      .orderBy(desc(expensesTable.createdAt))
     const cleanResponse = (await expenses).map((row) => ({
       id: row.id,
       title: row.title,
@@ -33,8 +33,8 @@ export const expensesRoute = new Hono()
       userId: row.userId,
       date: row.date,
       category: row.category,
-    }));
-    return c.json({ expenses: cleanResponse });
+    }))
+    return c.json({ expenses: cleanResponse })
   })
 
   /**
@@ -43,14 +43,14 @@ export const expensesRoute = new Hono()
    * Output: Response : {JSON} & Status code
    */
   .get('/total-spent', getUser, async (c) => {
-    const user = c.var.user;
+    const user = c.var.user
     const result = await db
       .select({ total: sum(expensesTable.amount) })
       .from(expensesTable)
       .where(eq(expensesTable.userId, user.id))
       .limit(1)
-      .then((res) => res[0]);
-    return c.json(result);
+      .then((res) => res[0])
+    return c.json(result)
   })
   /**
    * This Post Request add an expense for the user by its id by the getUser middelwear and validate the user inputs
@@ -59,8 +59,8 @@ export const expensesRoute = new Hono()
    */
 
   .get('/getbycat/:cat', getUser, async (c) => {
-    const user = c.var.user;
-    const category = c.req.param('cat');
+    const user = c.var.user
+    const category = c.req.param('cat')
 
     const expenses = await db
       .select()
@@ -71,7 +71,7 @@ export const expensesRoute = new Hono()
           eq(expensesTable.category, category)
         )
       )
-      .orderBy(desc(expensesTable.createdAt));
+      .orderBy(desc(expensesTable.createdAt))
 
     const cleanResponse = expenses.map((row) => ({
       id: row.id,
@@ -79,9 +79,9 @@ export const expensesRoute = new Hono()
       amount: row.amount,
       date: row.date,
       category: row.category,
-    }));
+    }))
 
-    return c.json({ expenses: cleanResponse });
+    return c.json({ expenses: cleanResponse })
   })
 
   /**
@@ -91,18 +91,18 @@ export const expensesRoute = new Hono()
    */
 
   .post('/', getUser, zValidator('json', createPostSchema), async (c) => {
-    const user = c.var.user;
-    const expense = c.req.valid('json');
+    const user = c.var.user
+    const expense = c.req.valid('json')
     const validatedExpenseObj = insertExpensesSchema.parse({
       ...expense,
       userId: user.id,
-    });
+    })
 
     const res = await db
       .insert(expensesTable)
       .values(validatedExpenseObj)
       .returning()
-      .then((res) => res[0]);
+      .then((res) => res[0])
 
     const cleanResponse = {
       id: res.id,
@@ -111,10 +111,10 @@ export const expensesRoute = new Hono()
       userId: res.userId,
       date: res.date,
       category: res.category,
-    };
+    }
 
-    c.status(201);
-    return c.json(cleanResponse);
+    c.status(201)
+    return c.json(cleanResponse)
   })
 
   /**
@@ -124,17 +124,17 @@ export const expensesRoute = new Hono()
    */
 
   .get('/:id{[0-9]+}', getUser, async (c) => {
-    const id = +c.req.param('id');
-    const user = c.var.user;
+    const id = +c.req.param('id')
+    const user = c.var.user
     const expense = await db
       .select()
       .from(expensesTable)
       .where(and(eq(expensesTable.userId, user.id), eq(expensesTable.id, id)))
       .limit(1)
-      .then((res) => res[0]);
+      .then((res) => res[0])
 
     if (!expense) {
-      return c.notFound();
+      return c.notFound()
     }
 
     const cleanResponse = {
@@ -143,22 +143,22 @@ export const expensesRoute = new Hono()
       amount: expense.amount,
       userId: expense.userId,
       date: expense.date,
-    };
+    }
 
-    return c.json({ expense: cleanResponse });
+    return c.json({ expense: cleanResponse })
   })
   .delete('/:id{[0-9]+}', getUser, async (c) => {
-    await new Promise((r) => setTimeout(r, 5000));
-    const id = +c.req.param('id');
-    const user = c.var.user;
+    await new Promise((r) => setTimeout(r, 5000))
+    const id = +c.req.param('id')
+    const user = c.var.user
     const expense = await db
       .delete(expensesTable)
       .where(and(eq(expensesTable.userId, user.id), eq(expensesTable.id, id)))
       .returning()
-      .then((res) => res[0]);
+      .then((res) => res[0])
 
     if (!expense) {
-      return c.notFound();
+      return c.notFound()
     }
 
     const cleanResponse = {
@@ -167,12 +167,12 @@ export const expensesRoute = new Hono()
       amount: expense.amount,
       userId: expense.userId,
       date: expense.date,
-    };
+    }
 
-    return c.json({ expense: cleanResponse });
+    return c.json({ expense: cleanResponse })
   })
   .get('/oftenExpense', getUser, async (c) => {
-    const user = c.var.user;
+    const user = c.var.user
     const expenses = db
       .select({
         title: expensesTable.title,
@@ -182,10 +182,10 @@ export const expensesRoute = new Hono()
       .from(expensesTable)
       .where(eq(expensesTable.userId, user.id))
       .groupBy(expensesTable.title)
-      .limit(6);
+      .limit(6)
     const cleanResponse = (await expenses).map((row) => ({
       title: row.title,
       amount: row.totalAmount,
-    }));
-    return c.json({ expenses: cleanResponse });
-  });
+    }))
+    return c.json({ expenses: cleanResponse })
+  })

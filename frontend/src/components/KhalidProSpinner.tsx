@@ -1,4 +1,4 @@
-import './KhalidProSpinner.css';
+import './KhalidProSpinner.css'
 interface KhalidProSpinnerProps {
   h: string;
 }
@@ -7,7 +7,7 @@ const KhalidProSpinner: React.FC<KhalidProSpinnerProps> = ({ h }) => {
     <div style={{ height: `${h}vh` }} className="khaledSpin">
       /
     </div>
-  );
-};
+  )
+}
 
-export default KhalidProSpinner;
+export default KhalidProSpinner

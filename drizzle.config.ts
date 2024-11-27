@@ -1,12 +1,12 @@
-import { defineConfig } from "drizzle-kit";
+import { defineConfig } from 'drizzle-kit'
 
 export default defineConfig({
-  out: "./drizzle",
-  dialect: "postgresql",
-  schema: "./server/db/schema.ts",
+  out: './drizzle',
+  dialect: 'postgresql',
+  schema: './server/db/schema.ts',
 
-  driver: "pglite",
+  driver: 'pglite',
   dbCredentials: {
     url: process.env.DATABASE_URL as string,
   },
-});
+})

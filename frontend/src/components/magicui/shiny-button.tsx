@@ -1,12 +1,9 @@
-'use client';
+'use client'
 
-import React from 'react';
-import {
-  motion,
-  type AnimationProps,
-  type HTMLMotionProps,
-} from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion'
+import type { AnimationProps, HTMLMotionProps } from 'framer-motion'
+import React from 'react'
+import { cn } from '@/lib/utils'
 
 // Define animation properties
 const animationProps = {
@@ -28,7 +25,7 @@ const animationProps = {
       mass: 0.5,
     },
   },
-} as AnimationProps;
+} as AnimationProps
 
 // Define props for the button
 interface ShinyButtonProps extends HTMLMotionProps<'a'> {
@@ -68,10 +65,10 @@ const ShinyButton = React.forwardRef<HTMLAnchorElement, ShinyButtonProps>(
           className="absolute inset-0 z-10 block rounded-[inherit] bg-[linear-gradient(-75deg,hsl(var(--primary)/10%)_calc(var(--x)+20%),hsl(var(--primary)/50%)_calc(var(--x)+25%),hsl(var(--primary)/10%)_calc(var(--x)+100%))] p-px"
         ></span>
       </motion.a>
-    );
+    )
   }
-);
+)
 
-ShinyButton.displayName = 'ShinyButton';
+ShinyButton.displayName = 'ShinyButton'
 
-export default ShinyButton;
+export default ShinyButton

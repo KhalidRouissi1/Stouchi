@@ -1,8 +1,16 @@
-import React from 'react';
+import { useForm } from '@tanstack/react-form'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { zodValidator } from '@tanstack/zod-form-adapter'
+import React from 'react'
 
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { toast } from 'sonner'
+import type { CreateExpense } from '../../../../server/routes/sharedValidation'
+import { createPostSchema } from '../../../../server/routes/sharedValidation'
+import { Button } from '../../components/ui/button'
+import { Calendar } from '../../components/ui/calendar'
+import { Input } from '../../components/ui/input'
+import { Label } from '../../components/ui/label'
 import {
   Select,
   SelectContent,
@@ -11,34 +19,25 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '../../components/ui/select'
 
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { useForm } from '@tanstack/react-form';
-
-import { toast } from 'sonner';
 import {
   createExpense,
   getAllExpensesQueryOptions,
   loadingCreateExpenseQueryOptions,
   oftenExpensesQueryOptions,
-} from '../../lib/api';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { type CreateExpense } from '../../../../server/routes/sharedValidation';
-import { zodValidator } from '@tanstack/zod-form-adapter';
-import { createPostSchema } from '../../../../server/routes/sharedValidation';
+} from '../../lib/api'
 
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
-});
-const categories = ['Food', 'Bills', 'Entertainment', 'Others'];
+})
+const categories = ['Food', 'Bills', 'Entertainment', 'Others']
 
 function CreateExpense() {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
-  const { data: oftenExpenses } = useQuery(oftenExpensesQueryOptions);
+  const { data: oftenExpenses } = useQuery(oftenExpensesQueryOptions)
 
   const form = useForm({
     validatorAdapter: zodValidator(),
@@ -51,38 +50,38 @@ function CreateExpense() {
     onSubmit: async ({ value }) => {
       const existingExpenses = await queryClient.ensureQueryData(
         getAllExpensesQueryOptions
-      );
+      )
 
-      navigate({ to: '/expenses' });
+      navigate({ to: '/expenses' })
       queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {
         expense: value,
-      });
+      })
       try {
-        const newExpense = await createExpense({ value });
+        const newExpense = await createExpense({ value })
         queryClient.setQueryData(getAllExpensesQueryOptions.queryKey, () => ({
           ...existingExpenses,
           expenses: [newExpense, ...existingExpenses.expenses],
-        }));
+        }))
 
-        console.log('Gisss');
+        console.log('Gisss')
 
         toast('Expense created', {
           description: `Successfully created new expense: ${newExpense.id}`,
-        });
+        })
       } catch (e) {
-        console.log(e);
+        console.log(e)
         toast('Error', {
           description: 'Failed to create new expense ',
-        });
+        })
       } finally {
-        queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {});
+        queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {})
       }
     },
-  });
+  })
 
   const handleOftenExpenseClick = (title: string) => {
-    form.setFieldValue('title', title);
-  };
+    form.setFieldValue('title', title)
+  }
 
   return (
     <div className="  p-2">
@@ -106,9 +105,9 @@ function CreateExpense() {
       <form
         className="flex flex-col gap-y-4 max-w-xl m-auto"
         onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
         }}
       >
         <form.Field
@@ -229,5 +228,5 @@ function CreateExpense() {
         </form.Subscribe>
       </form>
     </div>
-  );
+  )
 }

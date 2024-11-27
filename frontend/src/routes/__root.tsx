@@ -1,32 +1,31 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { type QueryClient } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/sonner';
-import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import type { QueryClient } from '@tanstack/react-query'
 import {
   createRootRouteWithContext,
   Link,
   Outlet,
-} from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
-import { Moon, Sun } from 'lucide-react';
+} from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { Moon, Sun } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Toaster } from '@/components/ui/sonner'
 
 const Root = () => {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(true)
 
   useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    setIsDark(isDarkMode);
-  }, []);
+    const isDarkMode = document.documentElement.classList.contains('dark')
+    setIsDark(isDarkMode)
+  }, [])
 
   const toggleDarkMode = () => {
     if (isDark) {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove('dark')
     } else {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add('dark')
     }
-    setIsDark(!isDark);
-  };
+    setIsDark(!isDark)
+  }
 
   return (
     <>
@@ -37,8 +36,8 @@ const Root = () => {
       </div>
       <TanStackRouterDevtools />
     </>
-  );
-};
+  )
+}
 
 function NavBar({
   toggleDarkMode,
@@ -90,7 +89,7 @@ function NavBar({
 
       <Toaster />
     </div>
-  );
+  )
 }
 
 interface MyRouterContext {
@@ -99,4 +98,4 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: Root,
-});
+})

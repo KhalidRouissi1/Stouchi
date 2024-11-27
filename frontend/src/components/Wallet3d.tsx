@@ -1,9 +1,8 @@
-import React from 'react';
-import * as THREE from 'three';
-import { Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { useGLTF, Environment, OrbitControls } from '@react-three/drei';
-import { GLTF } from 'three-stdlib';
+import { useGLTF, Environment, OrbitControls } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
+import React, { Suspense } from 'react'
+import type * as THREE from 'three'
+import type { GLTF } from 'three-stdlib'
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -17,13 +16,13 @@ type GLTFResult = GLTF & {
 function WalletModel(props: JSX.IntrinsicElements['group']) {
   const { nodes, materials } = useGLTF(
     '../public/Generate_a_3d_Wallet__1119102127_refine.glb'
-  ) as GLTFResult;
+  ) as GLTFResult
 
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.mesh_0.geometry} material={nodes.mesh_0.material} />
     </group>
-  );
+  )
 }
 
 // Error boundary component
@@ -32,7 +31,7 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
     <div className="min-h-[400px] w-full bg-background flex items-center justify-center">
       {children}
     </div>
-  );
+  )
 }
 
 // Loading component
@@ -41,7 +40,7 @@ function LoadingFallback() {
     <div className="min-h-[400px] w-full bg-background flex items-center justify-center">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
     </div>
-  );
+  )
 }
 
 // Main Wallet3D component
@@ -68,8 +67,8 @@ export default function Wallet3D({ scale = 30 }: { scale?: number }) {
         </Suspense>
       </div>
     </ErrorBoundary>
-  );
+  )
 }
 
 // Preload the model
-useGLTF.preload('../public/Generate_a_3d_Wallet__1119102127_refine.glb');
+useGLTF.preload('../public/Generate_a_3d_Wallet__1119102127_refine.glb')

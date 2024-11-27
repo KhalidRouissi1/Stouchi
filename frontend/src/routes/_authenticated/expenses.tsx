@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
-import {
-  getAllExpensesQueryOptions,
-  loadingCreateExpenseQueryOptions,
-} from '../../lib/api';
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import React, { useState } from 'react'
+import ExpenseDeleteButton from '../../components/ExpenseDeleteButton'
+import { Button } from '../../components/ui/button'
+import { Skeleton } from '../../components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -13,33 +12,36 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../../components/ui/table';
-import { Button } from '../../components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import ExpenseDeleteButton from '../../components/ExpenseDeleteButton';
-import { categories } from '../../lib/utils';
+} from '../../components/ui/table'
+import {
+  getAllExpensesQueryOptions,
+  loadingCreateExpenseQueryOptions,
+} from '../../lib/api'
+import { categories } from '../../lib/utils'
 
 export const Route = createFileRoute('/_authenticated/expenses')({
   component: Expenses,
-});
+})
 
 function Expenses() {
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState('All')
 
-  const { isPending, error, data } = useQuery(getAllExpensesQueryOptions);
+  const { isPending, error, data } = useQuery(getAllExpensesQueryOptions)
 
   const { data: loadingCreateExpense } = useQuery(
     loadingCreateExpenseQueryOptions
-  );
+  )
 
   const filteredExpenses =
     selectedCategory === 'All'
       ? data?.expenses
       : data?.expenses?.filter(
           (expense) => expense.category === selectedCategory
-        );
+        )
 
-  if (error) return 'An error has occurred: ' + error.message;
+  if (error) {
+    return 'An error has occurred: ' + error.message
+  }
 
   return (
     <>
@@ -135,7 +137,7 @@ function Expenses() {
         </TableBody>
       </Table>
     </>
-  );
+  )
 }
 
-export default Expenses;
+export default Expenses

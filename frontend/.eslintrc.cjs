@@ -1,17 +1,15 @@
-import globals from 'globals';
-import pluginJs from '@eslint/js';
-import tseslint from '@typescript-eslint/eslint-plugin';
-import pluginReact from 'eslint-plugin-react';
+import pluginJs from '@eslint/js'
+import tseslint from '@typescript-eslint/eslint-plugin'
+import pluginReact from 'eslint-plugin-react'
+import globals from 'globals'
 
 export default {
-  extends: [
-    'airbnb',
-    'airbnb-typescript',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['airbnb', 'airbnb-typescript', 'airbnbn-hooks'],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.json', // Ensure your tsconfig.json is correctly set up
+    project: './tsconfig.json',
+    ecmaVersion: 'latest',
+    sourceType: 'module',
   },
   env: {
     browser: true,
@@ -19,7 +17,7 @@ export default {
     es2021: true,
   },
   rules: {
-    'react/react-in-jsx-scope': 'off',
+    'react/react-in-jsx-scope': 1,
     'import/prefer-default-export': 'off',
     'react/prop-types': 'off',
   },
@@ -36,4 +34,4 @@ export default {
     ...tseslint.configs.recommended,
     pluginReact.configs.flat.recommended,
   ],
-};
+}

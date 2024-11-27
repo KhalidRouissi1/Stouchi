@@ -1,27 +1,27 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { oftenExpensesQueryOptions } from '../lib/api';
-import { Button } from './ui/button';
+import { useQuery } from '@tanstack/react-query'
+import React from 'react'
+import { oftenExpensesQueryOptions } from '../lib/api'
+import { Button } from './ui/button'
 
 const OftenExpense = ({ form }) => {
   const {
     data: oftenExpenses,
     isLoading,
     error,
-  } = useQuery(oftenExpensesQueryOptions);
+  } = useQuery(oftenExpensesQueryOptions)
 
   if (isLoading) {
-    return <div>Loading often expenses...</div>;
+    return <div>Loading often expenses...</div>
   }
 
   if (error instanceof Error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>
   }
 
   const handleOftenExpenseClick = (title: string, amount: number) => {
-    form.setFieldValue('title', title);
-    form.setFieldValue('amount', amount.toString());
-  };
+    form.setFieldValue('title', title)
+    form.setFieldValue('amount', amount.toString())
+  }
 
   return (
     <div className="flex flex-col self-center">
@@ -39,7 +39,7 @@ const OftenExpense = ({ form }) => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default OftenExpense;
+export default OftenExpense

@@ -1,4 +1,4 @@
-import app from './app';
+import app from './app'
 
 /**
  * This function it define the Server wich is bun
@@ -9,6 +9,6 @@ import app from './app';
 const Server = Bun.serve({
   port: process.env.PORT || 3000,
   fetch: app.fetch,
-});
+})
 
-console.log('server running', Server.port);
+console.log('server running', Server.port)

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useForm } from '@tanstack/react-form';
 import { zodValidator } from '@tanstack/zod-form-adapter';
+import React, { useState } from 'react';
 import { callOpenai } from '../lib/api';
 import KhalidProSpinner from './KhalidProSpinner';
 import { Button } from './ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 
 type FinancialData = {
   budget: number;

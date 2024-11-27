@@ -6,11 +6,10 @@ import {
   pgTable,
   timestamp,
   date,
-} from 'drizzle-orm/pg-core';
-import { z } from 'zod';
+} from 'drizzle-orm/pg-core'
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
+import { z } from 'zod'
 
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import {} from 'drizzle-orm/pg-core';
 export const expenses = pgTable(
   'expenses',
   {
@@ -25,7 +24,7 @@ export const expenses = pgTable(
   (expenses) => ({
     userIdIndex: index('user_id_idx').on(expenses.userId),
   })
-);
+)
 
 export const insertExpensesSchema = createInsertSchema(expenses, {
   title: z.string().min(3, { message: 'Title must be at least 3 characters' }),
@@ -33,8 +32,8 @@ export const insertExpensesSchema = createInsertSchema(expenses, {
     .string()
     .regex(/^\d+(\.\d{1,2})?$/, { message: 'Amount must be postive' }),
   category: z.enum(['Food', 'Bills', 'Entertainment', 'Others']),
-});
-export const selectExpensesSchema = createSelectSchema(expenses);
+})
+export const selectExpensesSchema = createSelectSchema(expenses)
 export const budget = pgTable(
   'budget',
   {
@@ -46,12 +45,12 @@ export const budget = pgTable(
   (budget) => ({
     userIdIndex: index('budget_user_id_idx').on(budget.userId),
   })
-);
+)
 
 export const insertBudgetSchema = createInsertSchema(budget, {
   userId: z.string().min(1, { message: 'User ID is required' }),
   amount: z
     .string()
     .regex(/^\d+(\.\d{1,2})?$/, { message: 'Amount must be a valid number' }),
-});
-export const selectBudgetSchema = createSelectSchema(budget);
+})
+export const selectBudgetSchema = createSelectSchema(budget)

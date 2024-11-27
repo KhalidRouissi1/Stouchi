@@ -1,17 +1,13 @@
-import React from 'react';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router'
+import React from 'react'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card';
-import Wallet3d from '../Wallet3d';
-
-export const Route = createFileRoute('/about')({
-  component: About,
-});
+} from '../components/ui/card'
+import Wallet3d from '../Wallet3d'
 
 function About() {
   return (
@@ -64,6 +60,7 @@ function About() {
             <h3 className="text-xl font-semibold text-primary dark:text-primary-foreground">
               How It Works:
             </h3>
+
             <p className="mt-4 text-foreground dark:text-white">
               With Stouchi, you can start by adding your expenses and
               categorizing them into predefined or custom categories. The app
@@ -78,7 +75,7 @@ function About() {
               Get Started Today
             </h3>
             <p className="mt-4 text-foreground dark:text-white">
-              Ready to take charge of your financial future?{' '}
+              Ready to take charge of your financial future?
               <strong>Stouchi</strong> makes it simple. Create an account, log
               in, and start managing your expenses with confidence.
             </p>
@@ -86,7 +83,11 @@ function About() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
 
-export default About;
+export default About
+
+export const Route = createFileRoute('/about')({
+  component: About,
+})

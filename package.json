@@ -4,7 +4,10 @@
   "type": "module",
   "scripts": {
     "start": "bun run server/index.ts",
-    "dev": "bun run --watch server/index.ts"
+    "dev": "bun run --watch server/index.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
@@ -22,6 +25,7 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.13",
+    "@hono/eslint-config": "^1.0.2",
     "@hono/zod-validator": "^0.4.1",
     "@kinde-oss/kinde-typescript-sdk": "^2.9.1",
     "@react-three/drei": "^9.117.3",
@@ -34,6 +38,7 @@
     "kaboom": "^3000.1.17",
     "pg": "^8.13.1",
     "postgres": "^3.4.5",
+    "prettier": "^3.4.1",
     "react-joyride": "^2.9.3",
     "three": "^0.170.0",
     "zod": "^3.23.8"

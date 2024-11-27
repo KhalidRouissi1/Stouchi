@@ -1,33 +1,33 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
-import { Progress } from '@/components/ui/progress';
-import { DollarSign, Wallet } from 'lucide-react';
-import PieChart from 'highcharts-react-official';
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import Highcharts from 'highcharts'
+import PieChart from 'highcharts-react-official'
+import { DollarSign, Wallet } from 'lucide-react'
+import React from 'react'
+import AdviceAI from '../../components/AdviceAi'
+import KhalidProSpinner from '../../components/KhalidProSpinner'
+import { CardDescription } from '../../components/ui/card'
+import { Progress } from '../../components/ui/progress'
+import { Skeleton } from '../../components/ui/skeleton'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '../../components/ui/tabs';
+} from '../../components/ui/tabs'
 import {
   getAllBudgetQueryOption,
   getAllExpensesQueryOptions,
   getTotalSpent,
-} from '../../lib/api';
-import { Skeleton } from '../../components/ui/skeleton';
-import KhalidProSpinner from '../../components/KhalidProSpinner';
-import { CardDescription } from '../../components/ui/card';
-import Highcharts from 'highcharts';
-import { categories } from '../../lib/utils';
-import AdviceAI from '../../components/AdviceAi';
+} from '../../lib/api'
+import { categories } from '../../lib/utils'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 function DashboardPage() {
-  const byCategory = new Map();
+  const byCategory = new Map()
   categories.forEach((category) => {
-    byCategory.set(category, 0);
-  });
+    byCategory.set(category, 0)
+  })
 
   const {
     isLoading: isTotalSpentLoading,
@@ -36,26 +36,26 @@ function DashboardPage() {
   } = useQuery({
     queryKey: ['total-spent'],
     queryFn: getTotalSpent,
-  });
+  })
 
   const {
     data: dataBudget,
     error: budgetError,
     isLoading: isBudgetLoading,
-  } = useQuery(getAllBudgetQueryOption);
+  } = useQuery(getAllBudgetQueryOption)
 
   const {
     data: allExpenses,
     error: allExpensesError,
     isLoading: isAllExpensesLoading,
-  } = useQuery(getAllExpensesQueryOptions);
+  } = useQuery(getAllExpensesQueryOptions)
 
   if (isTotalSpentLoading || isBudgetLoading || isAllExpensesLoading) {
     return (
       <div>
         <KhalidProSpinner h={80} />
       </div>
-    );
+    )
   }
 
   if (totalSpentError || budgetError || allExpensesError) {
@@ -66,7 +66,7 @@ function DashboardPage() {
           budgetError?.message ||
           allExpensesError?.message}
       </div>
-    );
+    )
   }
 
   allExpenses?.expenses.forEach((expense) => {
@@ -74,16 +74,16 @@ function DashboardPage() {
       byCategory.set(
         expense.category,
         byCategory.get(expense.category) + parseFloat(expense.amount)
-      );
+      )
     }
-  });
+  })
 
   const pieChartData = Array.from(byCategory.entries()).map(
     ([category, total]) => ({
       name: category,
       y: total,
     })
-  );
+  )
 
   const pieChartOptions = {
     chart: {
@@ -99,13 +99,13 @@ function DashboardPage() {
         data: pieChartData,
       },
     ],
-  };
+  }
 
   const budget = dataBudget?.budget?.amount
     ? parseFloat(dataBudget?.budget?.amount)
-    : 0;
-  const totalSpent = totalSpentData ? parseFloat(totalSpentData) : 0;
-  const remainingBudget = budget - totalSpent;
+    : 0
+  const totalSpent = totalSpentData ? parseFloat(totalSpentData) : 0
+  const remainingBudget = budget - totalSpent
 
   return (
     <div className="p-6 space-y-6">
@@ -203,11 +203,11 @@ function DashboardPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }
 
 export const Route = createFileRoute('/_authenticated/')({
   component: DashboardPage,
-});
+})
 
-export default DashboardPage;
+export default DashboardPage

@@ -10,7 +10,7 @@
     "strict": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "include": ["src", "./.eslintrc.cjs"],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }

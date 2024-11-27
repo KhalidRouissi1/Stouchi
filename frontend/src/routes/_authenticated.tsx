@@ -1,8 +1,8 @@
-import React from 'react';
+import { createFileRoute, Outlet } from '@tanstack/react-router'
+import React from 'react'
 
-import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { userQueyOptions } from '../lib/api';
-import ShinyButton from '../components/magicui/shiny-button';
+import ShinyButton from '../components/magicui/shiny-button'
+import { userQueyOptions } from '../lib/api'
 
 const Login = () => (
   <>
@@ -12,26 +12,26 @@ const Login = () => (
       <ShinyButton href="/api/register">register</ShinyButton>
     </div>
   </>
-);
+)
 
 const Component = () => {
-  const { user } = Route.useRouteContext();
-  console.log(user);
+  const { user } = Route.useRouteContext()
+  console.log(user)
   if (!user) {
-    return <Login />;
+    return <Login />
   }
-  return <Outlet />;
-};
+  return <Outlet />
+}
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async ({ context }) => {
-    const queryClient = context.queryClient;
+    const queryClient = context.queryClient
     try {
-      const data = await queryClient.fetchQuery(userQueyOptions);
-      return data;
+      const data = await queryClient.fetchQuery(userQueyOptions)
+      return data
     } catch (e) {
-      console.log(e);
-      return { user: null };
+      console.log(e)
+      return { user: null }
     }
   },
   component: Component,
-});
+})
