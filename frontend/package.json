@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.1",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-progress": "^1.1.0",
@@ -22,6 +23,7 @@
     "@react-three/fiber": "^8.17.10",
     "@tanstack/react-form": "^0.36.0",
     "@tanstack/react-query": "^5.60.5",
+    "@tanstack/react-query-devtools": "^5.62.0",
     "@tanstack/react-router": "^1.82.1",
     "@tanstack/router": "^0.0.1-beta.53",
     "@tanstack/router-devtools": "^1.82.1",
@@ -29,6 +31,7 @@
     "@types/canvas-confetti": "^1.6.4",
     "@types/three": "^0.170.0",
     "add": "^2.0.6",
+    "bun-types": "^1.1.38",
     "canvas-confetti": "^1.9.3",
     "card": "^2.5.4",
     "class-variance-authority": "^0.7.0",

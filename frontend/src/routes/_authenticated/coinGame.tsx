@@ -1,12 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
-import kaboom from 'kaboom'
-import * as React from 'react'
-import KhalidProSpinner from '../../components/KhalidProSpinner'
+import { createFileRoute } from '@tanstack/react-router';
+import kaboom from 'kaboom';
+import * as React from 'react';
+import KhalidProSpinner from '../../components/KhalidProSpinner';
 
 const Game = () => {
-  const [score, setScore] = React.useState(0)
-  const [isMusicPlaying, setIsMusicPlaying] = React.useState(true)
-  const gameCanvasRef = React.useRef(null)
+  const [score, setScore] = React.useState(0);
+  const [isMusicPlaying, setIsMusicPlaying] = React.useState(true);
+  const gameCanvasRef = React.useRef(null);
 
   React.useEffect(() => {
     //  Kaboom
@@ -16,7 +16,7 @@ const Game = () => {
         width: 640,
         height: 480,
         background: [0, 0, 0],
-      })
+      });
 
       // Create a simple player as a rectangle
       const player = k.add([
@@ -26,7 +26,7 @@ const Game = () => {
         k.area(),
         k.body(),
         'player',
-      ])
+      ]);
 
       // Function to spawn a coin as a circle
       function spawnCoin() {
@@ -35,52 +35,52 @@ const Game = () => {
           k.color(255, 223, 0),
           k.pos(k.rand(0, 640 - 32), k.rand(0, 480 - 32)),
           'coin',
-        ])
+        ]);
       }
       // Static coin respawn
-      spawnCoin()
-      spawnCoin()
-      spawnCoin()
-      spawnCoin()
+      spawnCoin();
+      spawnCoin();
+      spawnCoin();
+      spawnCoin();
 
-      k.onKeyDown('left', () => player.move(-200, 0))
-      k.onKeyDown('right', () => player.move(200, 0))
-      k.onKeyDown('up', () => player.move(0, -200))
-      k.onKeyDown('down', () => player.move(0, 200))
+      k.onKeyDown('left', () => player.move(-200, 0));
+      k.onKeyDown('right', () => player.move(200, 0));
+      k.onKeyDown('up', () => player.move(0, -200));
+      k.onKeyDown('down', () => player.move(0, 200));
 
       // Not working need to fix the collision when the hero and coin be on the same corrdanets
       k.onCollide('player', 'coin', (player, coin) => {
-        k.destroy(coin)
-        spawnCoin()
-        setScore((prevScore) => prevScore + 1)
-      })
+        k.destroy(coin);
+        spawnCoin();
+        setScore((prevScore) => prevScore + 1);
+      });
 
       const scoreLabel = k.add([
         k.text('Score: 0'),
         k.pos(10, 10),
         k.color(255, 255, 255),
-      ])
+      ]);
 
       k.onUpdate(() => {
-        scoreLabel.text = `Score: ${score}`
-      })
+        scoreLabel.text = `Score: ${score}`;
+      });
     }
 
     // playing the music
-    const audio = new Audio('music.mp3')
-    audio.loop = true
+    const audio = new Audio('music.mp3');
+    audio.loop = true;
     if (isMusicPlaying) {
-      audio.play()
+      audio.play();
     }
 
     return () => {
-      audio.pause()
-    }
-  }, [score, isMusicPlaying])
+      audio.pause();
+    };
+  }, [score, isMusicPlaying]);
 
   const toggleMusic = () => {
-    setIsMusicPlaying((prev) => !prev)
-  }
+    setIsMusicPlaying((prev) => !prev);
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -100,11 +100,11 @@ const Game = () => {
         {isMusicPlaying ? 'Pause Music' : 'Play Music'}
       </button>
     </div>
-  )
-}
+  );
+};
 
 export const Route = createFileRoute('/_authenticated/coinGame')({
   component: Game,
-})
+});
 
-export default Game
+export default Game;

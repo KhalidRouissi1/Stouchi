@@ -1,58 +1,52 @@
-import Highcharts from 'highcharts'
-import HighchartsReact from 'highcharts-react-official'
-import React from 'react'
-import { categories } from '../lib/utils'
+import Highcharts from 'highcharts';
+import React from 'react';
+import { byCategory, PieChartComponentProps } from '../lib/utils';
+import PieChart from 'highcharts-react-official';
 
-interface PieChartProps {
-  expensesData: { category: string; amount: number }[];
-}
+/**
+ * Renders a pie chart from Highcharts library that depende on Category of
+ * it accept {PieChartComponentProps} allExpenses The object that has all expenses 
+    (I pass all expense for scalability resons like want to make more than one type of charts)
+ * it return React.FC<PieChartComponentProps> that render the Piechart
+ *  * @example
+ * // Example usage in a React component
+ * <PieChartComponent allExpenses={expensesData} />
+ */
+const PieChartComponent: React.FC<PieChartComponentProps> = ({
+  allExpenses,
+}) => {
+  allExpenses?.expenses.forEach((expense) => {
+    if (byCategory.has(expense.category)) {
+      byCategory.set(
+        expense.category,
+        byCategory.get(expense.category) + parseFloat(expense.amount)
+      );
+    }
+  });
+  const pieChartData = Array.from(byCategory.entries()).map(
+    ([category, total]) => ({
+      name: category,
+      y: total,
+    })
+  );
 
-const PieChartComponent: React.FC<PieChartProps> = ({ expensesData }) => {
-  const allCat = new Map()
-  categories.forEach((category) => {
-    allCat.set(category, 0)
-  })
-
-  expensesData.forEach((expense) => {
-    const currentAmount = allCat.get(expense.category) || 0
-    allCat.set(expense.category, currentAmount + expense.amount)
-  })
-
-  // Prepare data for the pie chart
-  const categoryData = Array.from(allCat.entries()).map(([name, value]) => ({
-    name,
-    y: value,
-  }))
-  const pieOptions = {
+  const pieChartOptions = {
     chart: {
       type: 'pie',
     },
     title: {
       text: 'Expenses by Category',
     },
-    tooltip: {
-      pointFormat: '<b>{point.y} USD</b>',
-    },
-    plotOptions: {
-      pie: {
-        allowPointSelect: true,
-        cursor: 'pointer',
-        dataLabels: {
-          enabled: true,
-          format: '<b>{point.name}</b>: {point.percentage:.1f}%',
-        },
-      },
-    },
     series: [
       {
-        name: 'Categories',
+        name: 'Expenses',
         colorByPoint: true,
-        data: categoryData,
+        data: pieChartData,
       },
     ],
-  }
+  };
 
-  return <HighchartsReact highcharts={Highcharts} options={pieOptions} />
-}
+  return <PieChart highcharts={Highcharts} options={pieChartOptions} />;
+};
 
-export default PieChartComponent
+export default PieChartComponent;

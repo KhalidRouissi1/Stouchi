@@ -1,13 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
-import React from 'react'
+import { createFileRoute } from '@tanstack/react-router';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '../components/ui/card'
-import Wallet3d from '../Wallet3d'
+} from '../components/ui/card';
+import Wallet3d from '../Wallet3d';
 
 function About() {
   return (
@@ -83,11 +82,11 @@ function About() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
 
-export default About
+export default About;
 
 export const Route = createFileRoute('/about')({
   component: About,
-})
+});

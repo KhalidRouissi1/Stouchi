@@ -1,24 +1,30 @@
-import { useForm } from '@tanstack/react-form'
+import { useForm } from '@tanstack/react-form';
+import { useQueryClient } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { zodValidator } from '@tanstack/zod-form-adapter';
+import React from 'react';
+import { toast } from 'sonner';
+import { createBudget as createBudgetFunc } from '../../lib/api';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { loadingCreateBudgetQueryOptions } from '../../lib/api';
+import { createBudget } from '../../../../server/routes/sharedValidation';
 
-import { useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { zodValidator } from '@tanstack/zod-form-adapter'
-import React from 'react'
-import { toast } from 'sonner'
-import { createBudget } from '../../../../server/routes/sharedValidation'
-import { Button } from '../../components/ui/button'
-import { Input } from '../../components/ui/input'
-import { Label } from '../../components/ui/label'
-import { loadingCreateBudgetQueryOptions } from '../../lib/api'
+/**
+ * It link this component to the tanstack router
+ */
 export const Route = createFileRoute('/_authenticated/budget')({
-  component: RouteComponent,
-})
+  component: BudgetComponent,
+});
 
-function RouteComponent() {
-  const { user } = Route.useRouteContext()
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
-
+/**
+ * this component it contain a form that Creat a new budget each time you submit
+ */
+function BudgetComponent() {
+  const { user } = Route.useRouteContext();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const form = useForm({
     validatorAdapter: zodValidator(),
     defaultValues: {
@@ -27,31 +33,42 @@ function RouteComponent() {
     },
 
     onSubmit: async ({ value }) => {
+      /**
+       * Set the state to loading
+       */
+
       queryClient.setQueryData(loadingCreateBudgetQueryOptions.queryKey, {
         budget: value,
-      })
+      });
       try {
+        /**
+         * Call the create function when submit
+         */
+        await createBudgetFunc({ value });
         toast('Expense created', {
           description: 'Successfully Added to your budget',
-        })
-        navigate({ to: '/' })
+        });
+        navigate({ to: '/' });
       } catch (e) {
-        console.log(e)
+        console.log(e);
         toast('Error', {
           description: 'Failed to create new Budget ',
-        })
+        });
       } finally {
-        queryClient.setQueryData(loadingCreateBudgetQueryOptions.queryKey, {})
+        /**
+         * stop the loading state
+         */
+        queryClient.setQueryData(loadingCreateBudgetQueryOptions.queryKey, {});
       }
     },
-  })
+  });
   return (
     <form
       className="flex flex-col gap-y-4 max-w-xl m-auto"
       onSubmit={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        form.handleSubmit()
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
       }}
     >
       <form.Field
@@ -88,5 +105,5 @@ function RouteComponent() {
         )}
       </form.Subscribe>
     </form>
-  )
+  );
 }

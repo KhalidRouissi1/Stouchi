@@ -1,16 +1,15 @@
-import { useForm } from '@tanstack/react-form'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { zodValidator } from '@tanstack/zod-form-adapter'
-import React from 'react'
-
-import { toast } from 'sonner'
-import type { CreateExpense } from '../../../../server/routes/sharedValidation'
-import { createPostSchema } from '../../../../server/routes/sharedValidation'
-import { Button } from '../../components/ui/button'
-import { Calendar } from '../../components/ui/calendar'
-import { Input } from '../../components/ui/input'
-import { Label } from '../../components/ui/label'
+import { useForm } from '@tanstack/react-form';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { zodValidator } from '@tanstack/zod-form-adapter';
+import React from 'react';
+import { toast } from 'sonner';
+import type { CreateExpense as CreateExpenseType } from '../../../../server/routes/sharedValidation';
+import { createPostSchema } from '../../../../server/routes/sharedValidation';
+import { Button } from '../../components/ui/button';
+import { Calendar } from '../../components/ui/calendar';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import {
   Select,
   SelectContent,
@@ -19,25 +18,24 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '../../components/ui/select'
-
+} from '../../components/ui/select';
+import { categories } from '@/lib/utils';
 import {
   createExpense,
   getAllExpensesQueryOptions,
   loadingCreateExpenseQueryOptions,
   oftenExpensesQueryOptions,
-} from '../../lib/api'
+} from '../../lib/api';
 
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
-})
-const categories = ['Food', 'Bills', 'Entertainment', 'Others']
+});
 
 function CreateExpense() {
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  const { data: oftenExpenses } = useQuery(oftenExpensesQueryOptions)
+  const { data: oftenExpenses } = useQuery(oftenExpensesQueryOptions);
 
   const form = useForm({
     validatorAdapter: zodValidator(),
@@ -47,41 +45,41 @@ function CreateExpense() {
       date: new Date().toISOString(),
       category: 'Others',
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value }: { value: CreateExpenseType }) => {
       const existingExpenses = await queryClient.ensureQueryData(
         getAllExpensesQueryOptions
-      )
+      );
 
-      navigate({ to: '/expenses' })
+      navigate({ to: '/expenses' });
       queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {
         expense: value,
-      })
+      });
       try {
-        const newExpense = await createExpense({ value })
+        const newExpense = await createExpense({ value });
         queryClient.setQueryData(getAllExpensesQueryOptions.queryKey, () => ({
           ...existingExpenses,
           expenses: [newExpense, ...existingExpenses.expenses],
-        }))
+        }));
 
-        console.log('Gisss')
+        console.log('Gisss');
 
         toast('Expense created', {
           description: `Successfully created new expense: ${newExpense.id}`,
-        })
+        });
       } catch (e) {
-        console.log(e)
+        console.log(e);
         toast('Error', {
           description: 'Failed to create new expense ',
-        })
+        });
       } finally {
-        queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {})
+        queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {});
       }
     },
-  })
+  });
 
   const handleOftenExpenseClick = (title: string) => {
-    form.setFieldValue('title', title)
-  }
+    form.setFieldValue('title', title);
+  };
 
   return (
     <div className="  p-2">
@@ -105,9 +103,9 @@ function CreateExpense() {
       <form
         className="flex flex-col gap-y-4 max-w-xl m-auto"
         onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          form.handleSubmit()
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
         }}
       >
         <form.Field
@@ -122,7 +120,7 @@ function CreateExpense() {
               <Input
                 id={field.name}
                 name={field.name}
-                value={field.state.value}
+                value={field.state.value ?? ''}
                 onBlur={field.handleBlur}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   field.handleChange(e.target.value)
@@ -167,7 +165,11 @@ function CreateExpense() {
               <Label htmlFor={field.name}>Category</Label>
               <Select
                 value={field.state.value}
-                onValueChange={(value) => field.handleChange(value)}
+                onValueChange={(value) =>
+                  field.handleChange(
+                    value as 'Food' | 'Bills' | 'Entertainment' | 'Others'
+                  )
+                }
               >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="" />
@@ -203,11 +205,15 @@ function CreateExpense() {
                 selected={
                   field.state.value ? new Date(field.state.value) : undefined
                 }
-                onSelect={(date: Date) =>
-                  field.handleChange(
-                    date ? date.toISOString() : new Date().toISOString()
-                  )
-                }
+                onSelect={(date: Date | undefined) => {
+                  if (date) {
+                    field.handleChange(
+                      date ? date.toISOString() : new Date().toISOString()
+                    );
+                  } else {
+                    field.handleChange(new Date().toISOString());
+                  }
+                }}
                 className="rounded-md border shadow"
               />
               {field.state.meta.isTouched && field.state.meta.errors.length ? (
@@ -228,5 +234,5 @@ function CreateExpense() {
         </form.Subscribe>
       </form>
     </div>
-  )
+  );
 }

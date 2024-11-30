@@ -1,3 +1,5 @@
+// Shadcn utils
+
 import { clsx } from 'clsx';
 import type { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -19,3 +21,33 @@ export type FinancialData = {
   remainingBudget: number;
   expensesByCategory: Record<string, number>;
 };
+
+type FinancialDataType = {
+  budget: number;
+  totalSpent: number;
+  remainingBudget: number;
+  expensesByCategory: Record<string, number>;
+};
+
+export interface AdviceAIProps {
+  financialData: FinancialDataType;
+}
+
+export const byCategory = new Map();
+categories.forEach((category) => {
+  byCategory.set(category, 0);
+});
+
+interface AllExpenses {
+  expenses: {
+    id: number;
+    title: string | null;
+    amount: string;
+    userId: string;
+    date: string;
+    category: string;
+  }[];
+}
+export interface PieChartComponentProps {
+  allExpenses?: AllExpenses;
+}

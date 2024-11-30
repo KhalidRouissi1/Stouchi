@@ -1,5 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
 import { useForm } from '@tanstack/react-form';
+import { zodValidator } from '@tanstack/zod-form-adapter';
+import React, { useState } from 'react';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { callOpenai } from '../lib/api';
@@ -7,45 +8,39 @@ import KhalidProSpinner from './KhalidProSpinner';
 import { Button } from './ui/button';
 import { AdviceAIProps } from '../lib/utils';
 
-/**
- * Renders a from that takes a prompt and pass it to the OpenAi to generate a ai response
- * @param {AdviceAIProps}  financialData It has the data of the user budget spent remainingBudget spent by category
- * @return {ReactNode}  A React element that renders a form and a text that has ai response
- */
-
 export default function AdviceAI({ financialData }: AdviceAIProps) {
-  /**
-   * We used tanstack useMutation to make an API call to get AI advice based on data and prompt
-   */
-
-  const {
-    mutate,
-    data: response,
-    error,
-    isPending,
-  } = useMutation({
-    mutationFn: async (prompt: string) => {
-      // Call the api and pass params context and prompt
-      const result = await callOpenai({
-        prompt,
-        context: {
-          totalBudget: financialData.budget,
-          totalSpent: financialData.totalSpent,
-          remainingBudget: financialData.remainingBudget,
-          expensesByCategory: financialData.expensesByCategory,
-        },
-      });
-      return result || 'No advice generated';
-    },
-  });
-  // init the form that will containe the data "Prompt"
+  const [response, setResponse] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm({
+    validatorAdapter: zodValidator(),
     defaultValues: {
       prompt: '',
     },
-    onSubmit: ({ value }) => {
-      mutate(value.prompt);
+    onSubmit: async ({ value }) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const result = await callOpenai({
+          prompt: value.prompt,
+          context: {
+            totalBudget: financialData.budget,
+            totalSpent: financialData.totalSpent,
+            remainingBudget: financialData.remainingBudget,
+            expensesByCategory: financialData.expensesByCategory,
+          },
+        });
+        setResponse(result || 'No advice generated');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message || 'Failed to fetch advice');
+        } else {
+          setError('Failed to fetch advice');
+        }
+      } finally {
+        setLoading(false);
+      }
     },
   });
 
@@ -84,7 +79,9 @@ export default function AdviceAI({ financialData }: AdviceAIProps) {
                 id={field.name}
                 value={field.state.value}
                 onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  field.handleChange(e.target.value)
+                }
                 placeholder="e.g., Should I make a major purchase given my current budget?"
               />
             </div>
@@ -94,16 +91,14 @@ export default function AdviceAI({ financialData }: AdviceAIProps) {
         <Button
           type="submit"
           className="text-white p-2 rounded"
-          disabled={isPending}
+          disabled={loading}
         >
-          {isPending ? <KhalidProSpinner h={'4'} /> : 'Ask AI'}
+          {loading ? <KhalidProSpinner h={'4'} /> : 'Ask AI'}
         </Button>
       </form>
 
       {error && (
-        <div className="p-4 text-red-500 bg-red-50 rounded">
-          {(error as Error).message || 'Failed to fetch advice'}
-        </div>
+        <div className="p-4 text-red-500 bg-red-50 rounded">{error}</div>
       )}
 
       {response && (

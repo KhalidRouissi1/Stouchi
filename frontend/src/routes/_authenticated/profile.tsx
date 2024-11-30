@@ -1,30 +1,29 @@
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
-import React from 'react'
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '../../components/ui/avatar'
-import { Button } from '../../components/ui/button'
+} from '../../components/ui/avatar';
+import { Button } from '../../components/ui/button';
 import {
   Card,
   CardHeader,
   CardContent,
   CardFooter,
-} from '../../components/ui/card'
-import { Skeleton } from '../../components/ui/skeleton'
-import { userQueyOptions } from '../../lib/api'
+} from '../../components/ui/card';
+import { Skeleton } from '../../components/ui/skeleton';
+import { userQueyOptions } from '../../lib/api';
 
 export const Route = createFileRoute('/_authenticated/profile')({
   component: Profile,
-})
+});
 
 function Profile() {
-  const { isPending, error, data } = useQuery(userQueyOptions)
+  const { isPending, error, data } = useQuery(userQueyOptions);
 
   if (isPending) {
-    return <ProfileSkeleton />
+    return <ProfileSkeleton />;
   }
 
   if (error) {
@@ -39,7 +38,7 @@ function Profile() {
           </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -70,7 +69,7 @@ function Profile() {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
 
 function ProfileSkeleton() {
@@ -90,7 +89,7 @@ function ProfileSkeleton() {
         <Skeleton className="h-10 w-[100px]" />
       </CardFooter>
     </Card>
-  )
+  );
 }
 
-export default Profile
+export default Profile;

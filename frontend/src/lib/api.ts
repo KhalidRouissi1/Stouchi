@@ -5,7 +5,7 @@ import type {
   CreateBudget,
   CreateExpense,
 } from './../../../server/routes/sharedValidation';
-import { FinancialData } from './utils';
+import type { FinancialData } from './utils';
 
 // An instance from hono/client to active the RPC (A way to make requestes directly in monolothic projects with the backedn)
 const client = hc<ApiRoute>('/');

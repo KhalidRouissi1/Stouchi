@@ -5,7 +5,7 @@
   "scripts": {
     "start": "bun run server/index.ts",
     "dev": "bun run --watch server/index.ts",
-    "lint": "eslint .",
+    "lint": "eslint . ",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
   },
@@ -26,6 +26,7 @@
   "dependencies": {
     "@electric-sql/pglite": "^0.2.13",
     "@hono/eslint-config": "^1.0.2",
+    "@hono/swagger-ui": "^0.5.0",
     "@hono/zod-validator": "^0.4.1",
     "@kinde-oss/kinde-typescript-sdk": "^2.9.1",
     "@react-three/drei": "^9.117.3",
