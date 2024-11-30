@@ -8,9 +8,6 @@ import PieChart from 'highcharts-react-official';
  * it accept {PieChartComponentProps} allExpenses The object that has all expenses 
     (I pass all expense for scalability resons like want to make more than one type of charts)
  * it return React.FC<PieChartComponentProps> that render the Piechart
- *  * @example
- * // Example usage in a React component
- * <PieChartComponent allExpenses={expensesData} />
  */
 const PieChartComponent: React.FC<PieChartComponentProps> = ({
   allExpenses,

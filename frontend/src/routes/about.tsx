@@ -11,9 +11,6 @@ import Wallet3d from '../Wallet3d';
 function About() {
   return (
     <div className="flexp-6 max-w-4xl mx-auto bg-background dark:bg-background">
-      <div className="mb-8 w-full h-[400px] relative bg-gradient-to-b from-transparent to-background/10 rounded-lg overflow-hidden">
-        <Wallet3d />
-      </div>
       <Card className="shadow-xl rounded-xl bg-card dark:bg-card text-card-foreground dark:text-card-foreground">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-primary dark:text-primary-foreground">
@@ -22,6 +19,9 @@ function About() {
           <CardDescription className="text-lg text-foreground dark:text-white">
             A powerful, simple, and secure way to take control of your finances
           </CardDescription>
+          <div className="mb-8 w-full h-[400px] relative bg-gradient-to-b from-transparent to-background/10 rounded-lg overflow-hidden">
+            <Wallet3d />
+          </div>
         </CardHeader>
         <CardContent>
           <section className="mb-6">

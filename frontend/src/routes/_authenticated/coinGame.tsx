@@ -85,7 +85,7 @@ const Game = () => {
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-4xl my-2">
-        Soon
+        Soon, Im still Learning Kaboom
         <KhalidProSpinner h="5" />
       </h1>
       <canvas ref={gameCanvasRef} className="border-2 border-blue-500"></canvas>

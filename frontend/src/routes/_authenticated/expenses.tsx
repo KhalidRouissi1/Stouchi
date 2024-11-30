@@ -19,26 +19,32 @@ import {
 } from '../../lib/api';
 import { categories } from '../../lib/utils';
 
+/**
+ * It link this component to the tanstack router
+ */
 export const Route = createFileRoute('/_authenticated/expenses')({
   component: Expenses,
 });
-
+/**
+ * this component it return a list of Expenses filtered in client side
+ */
 function Expenses() {
+  // A State of the selected category filter buttons
   const [selectedCategory, setSelectedCategory] = useState('All');
-
+  // init the useQuery and get it returns
   const { isPending, error, data } = useQuery(getAllExpensesQueryOptions);
-
+  // get the loading Create Expense to see when to add the new expense and not to refetch
   const { data: loadingCreateExpense } = useQuery(
     loadingCreateExpenseQueryOptions
   );
-
+  // get filterd data by category or just simply all of em
   const filteredExpenses =
     selectedCategory === 'All'
       ? data?.expenses
       : data?.expenses?.filter(
           (expense) => expense.category === selectedCategory
         );
-
+  // In case of getting expenses get down or catch an error this message will appear to inform the user
   if (error) {
     return 'An error has occurred: ' + error.message;
   }

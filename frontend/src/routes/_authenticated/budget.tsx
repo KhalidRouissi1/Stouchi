@@ -36,7 +36,6 @@ function BudgetComponent() {
       /**
        * Set the state to loading
        */
-
       queryClient.setQueryData(loadingCreateBudgetQueryOptions.queryKey, {
         budget: value,
       });

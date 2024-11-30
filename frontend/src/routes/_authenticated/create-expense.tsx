@@ -27,13 +27,19 @@ import {
   oftenExpensesQueryOptions,
 } from '../../lib/api';
 
+/**
+ * It link this component to the tanstack router
+ */
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
 });
-
+/**
+ * this component it contain a form that Creat an expense using it tiltle amount date category
+ */
 function CreateExpense() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  // get often expense that the user used to buy
 
   const { data: oftenExpenses } = useQuery(oftenExpensesQueryOptions);
 
@@ -46,23 +52,24 @@ function CreateExpense() {
       category: 'Others',
     },
     onSubmit: async ({ value }: { value: CreateExpenseType }) => {
+      // Load all  expenses before adding
       const existingExpenses = await queryClient.ensureQueryData(
         getAllExpensesQueryOptions
       );
-
       navigate({ to: '/expenses' });
+      // set loading
+
       queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {
         expense: value,
       });
       try {
+        // Create new expense
         const newExpense = await createExpense({ value });
+        // Add the new expense to the old expenses to not go to refetch all data cause all data is cached
         queryClient.setQueryData(getAllExpensesQueryOptions.queryKey, () => ({
           ...existingExpenses,
           expenses: [newExpense, ...existingExpenses.expenses],
         }));
-
-        console.log('Gisss');
-
         toast('Expense created', {
           description: `Successfully created new expense: ${newExpense.id}`,
         });

@@ -2,6 +2,7 @@
 
 import { clsx } from 'clsx';
 import type { ClassValue } from 'clsx';
+import { LucideIcon } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -50,4 +51,14 @@ interface AllExpenses {
 }
 export interface PieChartComponentProps {
   allExpenses?: AllExpenses;
+}
+/* eslint-disable */
+export interface StatsCardProps {
+  title: string;
+  icon: LucideIcon;
+  amount: number;
+  isLoading?: boolean;
+  total?: number;
+  formatter?: (value: number) => string;
+  progressLabel?: string;
 }
