@@ -1,17 +1,34 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Progress } from '@/components/ui/progress';
 import { DollarSign, Wallet } from 'lucide-react';
-
+import AdviceAI from '../../components/AdviceAi';
+import KhalidProSpinner from '../../components/KhalidProSpinner';
+import { CardDescription } from '../../components/ui/card';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '../../components/ui/tabs';
 import {
   getAllBudgetQueryOption,
   getAllExpensesQueryOptions,
   getTotalSpent,
 } from '../../lib/api';
-import { Skeleton } from '../../components/ui/skeleton';
-
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
+import { byCategory } from '../../lib/utils';
+import PieChartComponent from '../../components/PieChartComponent';
+import StatsCard from '@/components/StatsCardProps';
+/**
+ * this component it return a list of Expenses filtered in client side
+ */
 function DashboardPage() {
+  // Get total expense using tanstack query
   const {
     isLoading: isTotalSpentLoading,
     error: totalSpentError,
@@ -20,106 +37,106 @@ function DashboardPage() {
     queryKey: ['total-spent'],
     queryFn: getTotalSpent,
   });
+  // Get budget using tanstack query
 
   const {
     data: dataBudget,
     error: budgetError,
     isLoading: isBudgetLoading,
   } = useQuery(getAllBudgetQueryOption);
+  // Get all expense using tanstack query
 
   const {
-    isLoading: isAllExpenseLoading,
-    error: allExpenseError,
-    data: allExpense,
+    data: allExpenses,
+    error: allExpensesError,
+    isLoading: isAllExpensesLoading,
   } = useQuery(getAllExpensesQueryOptions);
+  // if any of the states are loading so the KhalidProSpinner will load
 
-  if (isTotalSpentLoading || isBudgetLoading || isAllExpenseLoading) {
-    return <div>Loading...</div>;
+  if (isTotalSpentLoading || isBudgetLoading || isAllExpensesLoading) {
+    return (
+      <div>
+        <KhalidProSpinner h={'80'} />
+      </div>
+    );
   }
+  // if any Error happend it gonna show the error message
 
-  if (totalSpentError || budgetError || allExpenseError) {
+  if (totalSpentError || budgetError || allExpensesError) {
     return (
       <div>
         Error:{' '}
         {totalSpentError?.message ||
           budgetError?.message ||
-          allExpenseError?.message}
+          allExpensesError?.message}
       </div>
     );
   }
-
+  // Check if there  dataBudget?.budget?.amount is not null so it will convert it to float else it gonna be 0
   const budget = dataBudget?.budget?.amount
     ? parseFloat(dataBudget?.budget?.amount)
     : 0;
+  // Check if there  totalSpentData is not null so it will convert it to float else it gonna be 0
   const totalSpent = totalSpentData ? parseFloat(totalSpentData) : 0;
   const remainingBudget = budget - totalSpent;
 
   return (
     <div className="p-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Expenses
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold flex gap-2">
-              $
-              {isTotalSpentLoading ? (
-                <Skeleton className="w-[80px] h-[30px] rounded-full" />
-              ) : (
-                totalSpent.toFixed(2)
-              )}
-            </div>
-            <Progress
-              value={
-                budget > 0 ? Math.min((totalSpent / budget) * 100, 100) : 0
-              }
-              className="mt-2"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              {budget > 0
-                ? `${Math.min((totalSpent / budget) * 100, 100).toFixed(0)}% of budget`
-                : 'No budget set'}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Remaining Budget
-            </CardTitle>
-            <Wallet className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            {isBudgetLoading ? (
-              <Skeleton className="w-[80px] h-[30px] rounded-full" />
-            ) : (
-              <div className="text-2xl font-bold">
-                ${remainingBudget.toFixed(2)}
-              </div>
-            )}
-            <Progress
-              value={
-                budget > 0 ? Math.min((remainingBudget / budget) * 100, 100) : 0
-              }
-              className="mt-2"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              {budget > 0
-                ? `${Math.min((remainingBudget / budget) * 100, 100).toFixed(0)}% remaining`
-                : 'No budget set'}
-            </p>
-          </CardContent>
-        </Card>
+        <StatsCard
+          title="Total Expenses"
+          icon={DollarSign}
+          amount={totalSpent}
+          isLoading={isTotalSpentLoading}
+          total={budget}
+          progressLabel="of budget"
+        ></StatsCard>
+        <StatsCard
+          title="Remaining Budget"
+          icon={Wallet}
+          amount={remainingBudget}
+          isLoading={isBudgetLoading}
+          total={budget}
+          progressLabel="remaining"
+        ></StatsCard>
       </div>
+      <Tabs defaultValue="chart" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="chart">Expenses </TabsTrigger>
+          <TabsTrigger value="expenses">Advice?</TabsTrigger>
+        </TabsList>
+        <TabsContent value="chart">
+          <Card>
+            <CardContent className="space-y-4">
+              <PieChartComponent allExpenses={allExpenses} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="expenses">
+          <Card>
+            <CardHeader>
+              <CardTitle>Expenses Details</CardTitle>
+              <CardDescription>
+                <AdviceAI
+                  financialData={{
+                    budget,
+                    totalSpent,
+                    remainingBudget,
+                    expensesByCategory: Object.fromEntries(byCategory),
+                  }}
+                />
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2"></CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
-
+/**
+ * It link this component to the tanstack router
+ */
 export const Route = createFileRoute('/_authenticated/')({
   component: DashboardPage,
 });

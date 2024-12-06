@@ -1,27 +1,30 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import {
-  createBudget as createBudgetToSend,
-  getAllBudgetQueryOption,
-  loadingCreateBudgetQueryOptions,
-} from '../../lib/api';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useForm } from '@tanstack/react-form';
-import { Button } from '@/components/ui/button';
-
-import { zodValidator } from '@tanstack/zod-form-adapter';
 import { useQueryClient } from '@tanstack/react-query';
-import { createBudget } from '../../../../server/routes/sharedValidation';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { zodValidator } from '@tanstack/zod-form-adapter';
+import React from 'react';
 import { toast } from 'sonner';
+import { createBudget as createBudgetFunc } from '../../lib/api';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { loadingCreateBudgetQueryOptions } from '../../lib/api';
+import { createBudget } from '../../../../server/routes/sharedValidation';
+
+/**
+ * It link this component to the tanstack router
+ */
 export const Route = createFileRoute('/_authenticated/budget')({
-  component: RouteComponent,
+  component: BudgetComponent,
 });
 
-function RouteComponent() {
+/**
+ * this component it contain a form that Creat a new budget each time you submit
+ */
+function BudgetComponent() {
   const { user } = Route.useRouteContext();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-
   const form = useForm({
     validatorAdapter: zodValidator(),
     defaultValues: {
@@ -30,20 +33,30 @@ function RouteComponent() {
     },
 
     onSubmit: async ({ value }) => {
+      /**
+       * Set the state to loading
+       */
       queryClient.setQueryData(loadingCreateBudgetQueryOptions.queryKey, {
         budget: value,
       });
       try {
-        const newBudget = await createBudgetToSend({ value });
+        /**
+         * Call the create function when submit
+         */
+        await createBudgetFunc({ value });
         toast('Expense created', {
-          description: `Successfully Added to your budget`,
+          description: 'Successfully Added to your budget',
         });
         navigate({ to: '/' });
       } catch (e) {
+        console.log(e);
         toast('Error', {
-          description: 'Failed to create new expense ',
+          description: 'Failed to create new Budget ',
         });
       } finally {
+        /**
+         * stop the loading state
+         */
         queryClient.setQueryData(loadingCreateBudgetQueryOptions.queryKey, {});
       }
     },
@@ -59,35 +72,37 @@ function RouteComponent() {
     >
       <form.Field
         name="amount"
-        validators={{
-          onChange: createBudget.shape.amount,
-        }}
-        children={(field) => (
+        validators={{ onChange: createBudget.shape.amount }}
+      >
+        {(field) => (
           <div>
-            <Label htmlFor={field.name}>Amount</Label>
+            <Label htmlFor={field.name}>Your new Budget</Label>
             <Input
               id={field.name}
               name={field.name}
               value={field.state.value}
               onBlur={field.handleBlur}
               type="number"
-              onChange={(e: any) => field.handleChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                field.handleChange(e.target.value)
+              }
             />
             {field.state.meta.isTouched && field.state.meta.errors.length ? (
               <em>{field.state.meta.errors.join(', ')}</em>
             ) : null}
           </div>
         )}
-      />
+      </form.Field>
 
       <form.Subscribe
         selector={(state) => [state.canSubmit, state.isSubmitting]}
-        children={([canSubmit, isSubmitting]) => (
+      >
+        {([canSubmit, isSubmitting]) => (
           <Button type="submit" className="mt-4 z-2" disabled={!canSubmit}>
             {isSubmitting ? '...' : 'Add to your budget'}
           </Button>
         )}
-      />
+      </form.Subscribe>
     </form>
   );
 }

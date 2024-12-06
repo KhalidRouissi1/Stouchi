@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import {
-  getAllExpensesQueryOptions,
-  loadingCreateExpenseQueryOptions,
-} from '../../lib/api';
+import { useState } from 'react';
+import ExpenseDeleteButton from '../../components/ExpenseDeleteButton';
+import { Button } from '../../components/ui/button';
+import { Skeleton } from '../../components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -14,34 +13,41 @@ import {
   TableHeader,
   TableRow,
 } from '../../components/ui/table';
-import { Button } from '../../components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import ExpenseDeleteButton from '../../components/ExpenseDeleteButton';
+import {
+  getAllExpensesQueryOptions,
+  loadingCreateExpenseQueryOptions,
+} from '../../lib/api';
 import { categories } from '../../lib/utils';
 
+/**
+ * It link this component to the tanstack router
+ */
 export const Route = createFileRoute('/_authenticated/expenses')({
   component: Expenses,
 });
-
+/**
+ * this component it return a list of Expenses filtered in client side
+ */
 function Expenses() {
+  // A State of the selected category filter buttons
   const [selectedCategory, setSelectedCategory] = useState('All');
-
-  const { isPending, error, data, isFetching } = useQuery(
-    getAllExpensesQueryOptions,
-  );
-
+  // init the useQuery and get it returns
+  const { isPending, error, data } = useQuery(getAllExpensesQueryOptions);
+  // get the loading Create Expense to see when to add the new expense and not to refetch
   const { data: loadingCreateExpense } = useQuery(
-    loadingCreateExpenseQueryOptions,
+    loadingCreateExpenseQueryOptions
   );
-
+  // get filterd data by category or just simply all of em
   const filteredExpenses =
     selectedCategory === 'All'
       ? data?.expenses
       : data?.expenses?.filter(
-          (expense) => expense.category === selectedCategory,
+          (expense) => expense.category === selectedCategory
         );
-
-  if (error) return 'An error has occurred: ' + error.message;
+  // In case of getting expenses get down or catch an error this message will appear to inform the user
+  if (error) {
+    return 'An error has occurred: ' + error.message;
+  }
 
   return (
     <>
@@ -88,7 +94,7 @@ function Expenses() {
               <TableCell>
                 {loadingCreateExpense?.expense.date.slice(
                   0,
-                  loadingCreateExpense.expense.date.indexOf('T'),
+                  loadingCreateExpense.expense.date.indexOf('T')
                 )}
               </TableCell>
               <TableCell>{loadingCreateExpense?.expense.category}</TableCell>

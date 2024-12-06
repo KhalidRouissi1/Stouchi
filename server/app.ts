@@ -1,10 +1,10 @@
 import { Hono } from 'hono';
-import { logger } from 'hono/logger';
-import { expensesRoute } from './routes/expenses';
 import { serveStatic } from 'hono/bun';
+import { logger } from 'hono/logger';
 import { authRoute } from './routes/auth';
 import { budgetRoute } from './routes/budget';
-
+import { expensesRoute } from './routes/expenses';
+import { swaggerUI } from '@hono/swagger-ui';
 const app = new Hono();
 /**
  * I used this fucntion it logs our requestes responses

@@ -1,21 +1,28 @@
-import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { userQueyOptions } from '../../lib/api';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { createFileRoute } from '@tanstack/react-router';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '../../components/ui/avatar';
+import { Button } from '../../components/ui/button';
 import {
   Card,
   CardHeader,
   CardContent,
   CardFooter,
-} from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+} from '../../components/ui/card';
+import { Skeleton } from '../../components/ui/skeleton';
+import { userQueyOptions } from '../../lib/api';
 
 export const Route = createFileRoute('/_authenticated/profile')({
   component: Profile,
 });
-
+/**
+ * this component it return the data of the user that comes from Kinde api
+ */
 function Profile() {
+  // this useQuery of the stupide tanner it take as a parameter options from the api file to getCurrentUser
   const { isPending, error, data } = useQuery(userQueyOptions);
 
   if (isPending) {

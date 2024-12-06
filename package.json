@@ -4,28 +4,44 @@
   "type": "module",
   "scripts": {
     "start": "bun run server/index.ts",
-    "dev": "bun run --watch server/index.ts"
+    "dev": "bun run --watch server/index.ts",
+    "lint": "eslint . ",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ."
   },
   "devDependencies": {
+    "@eslint/js": "^9.15.0",
     "@flydotio/dockerfile": "^0.5.9",
     "@types/bun": "latest",
     "@types/pg": "^8.11.10",
-    "drizzle-kit": "^0.28.1"
+    "drizzle-kit": "^0.28.1",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react": "^7.37.2",
+    "globals": "^15.12.0",
+    "typescript-eslint": "^8.15.0"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.13",
+    "@hono/eslint-config": "^1.0.2",
+    "@hono/swagger-ui": "^0.5.0",
     "@hono/zod-validator": "^0.4.1",
     "@kinde-oss/kinde-typescript-sdk": "^2.9.1",
+    "@react-three/drei": "^9.117.3",
+    "@react-three/fiber": "^8.17.10",
+    "@types/three": "^0.170.0",
     "drizzle-orm": "^0.36.3",
     "drizzle-zod": "^0.5.1",
     "hono": "^4.6.10",
     "i": "^0.3.7",
+    "kaboom": "^3000.1.17",
     "pg": "^8.13.1",
     "postgres": "^3.4.5",
+    "prettier": "^3.4.1",
     "react-joyride": "^2.9.3",
+    "three": "^0.170.0",
     "zod": "^3.23.8"
   }
 }

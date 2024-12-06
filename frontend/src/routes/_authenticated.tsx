@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { userQueyOptions } from '../lib/api';
+
 import ShinyButton from '../components/magicui/shiny-button';
+import { userQueyOptions } from '../lib/api';
 
 const Login = () => (
   <>
@@ -27,6 +28,7 @@ export const Route = createFileRoute('/_authenticated')({
       const data = await queryClient.fetchQuery(userQueyOptions);
       return data;
     } catch (e) {
+      console.log(e);
       return { user: null };
     }
   },
